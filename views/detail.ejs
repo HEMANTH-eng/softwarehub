@@ -1,0 +1,180 @@
+<%- include('partials/header') %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+  
+  <!-- Breadcrumb Navigation -->
+  <nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3 text-xs font-semibold text-slate-500">
+      <li class="inline-flex items-center">
+        <a href="/" class="hover:text-brand-600 flex items-center gap-1.5 transition-colors">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>
+          <span>Home</span>
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i data-lucide="chevron-right" class="w-3 h-3 text-slate-300"></i>
+          <a href="/search?category=<%= software.category_slug %>" class="ml-1 md:ml-2 hover:text-brand-600 transition-colors"><%= software.category_name %></a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <i data-lucide="chevron-right" class="w-3 h-3 text-slate-300"></i>
+          <span class="ml-1 md:ml-2 text-slate-700 font-bold truncate"><%= software.name %></span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Product Main Block -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left 2-Cols: Content & Description -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+        
+        <!-- Header: Icon, Name, Category -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 border-b border-slate-100 pb-6 mb-6">
+          <div class="w-20 h-20 bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 flex items-center justify-center shrink-0">
+            <% if (software.icon_image) { %>
+              <img src="/storage/images/<%= software.icon_image %>" alt="<%= software.name %> Icon" class="w-full h-full object-cover">
+            <% } else { %>
+              <div class="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400">
+                <i data-lucide="package" class="w-10 h-10"></i>
+              </div>
+            <% } %>
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap gap-2 items-center mb-1">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 tracking-wider uppercase">
+                <%= software.category_name %>
+              </span>
+              <% if (software.version) { %>
+                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-500 border border-slate-200">
+                  Version <%= software.version %>
+                </span>
+              <% } %>
+            </div>
+            
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+              <%= software.name %>
+            </h1>
+            
+            <div class="flex flex-wrap items-center gap-4 text-xs text-slate-400 mt-2">
+              <span class="flex items-center gap-1">
+                <i data-lucide="database" class="w-3.5 h-3.5"></i>
+                <span>File Size: <strong><%= software.size %></strong></span>
+              </span>
+              <span class="px-1 text-slate-200">•</span>
+              <span class="flex items-center gap-1">
+                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                <span>Updated: <strong><%= new Date(software.updated_at).toLocaleDateString() %></strong></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description Details -->
+        <div class="space-y-6 text-slate-600 text-sm sm:text-base leading-relaxed">
+          <p class="text-slate-800 font-medium text-base sm:text-lg border-l-4 border-brand-500 pl-4 py-0.5 bg-slate-50 rounded-r-lg">
+            <%= software.short_description %>
+          </p>
+          
+          <% if (software.full_description) { %>
+            <div class="prose max-w-none text-slate-600 space-y-4">
+              <h3 class="text-base font-bold text-slate-900 uppercase tracking-wider mb-2">Overview Details</h3>
+              <% software.full_description.split('\n').filter(p => p.trim() !== '').forEach(function(para) { %>
+                <p><%= para %></p>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Safe placement for Banner Ad (Below details and description block, never near download button) -->
+        <%- include('partials/ad_slot', { format: 'banner' }) %>
+
+      </div>
+
+    </div>
+
+    <!-- Right 1-Col: Sidebar Details (Download Trigger Area) -->
+    <div class="space-y-6">
+      
+      <!-- Action Card -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col gap-5">
+        <h3 class="font-bold text-slate-800 text-sm border-b border-slate-100 pb-3">Download Area</h3>
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between text-xs border-b border-slate-100 py-2">
+            <span class="text-slate-400">File Type:</span>
+            <span class="font-bold text-slate-700 uppercase"><%= software.file_path ? software.file_path.split('.').pop() : 'EXE' %> Installer</span>
+          </div>
+          <div class="flex items-center justify-between text-xs border-b border-slate-100 py-2">
+            <span class="text-slate-400">Security check:</span>
+            <span class="font-semibold text-emerald-600 flex items-center gap-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+              <span>100% Virus-Free</span>
+            </span>
+          </div>
+          <div class="flex items-center justify-between text-xs border-b border-slate-100 py-2">
+            <span class="text-slate-400">Platform:</span>
+            <span class="font-semibold text-slate-700">Windows OS</span>
+          </div>
+        </div>
+
+        <!-- Primary CTA Download Button -->
+        <a 
+          href="/download/<%= software.id %>" 
+          class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none"
+        >
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Download Now (<%= software.size %>)</span>
+        </a>
+
+        <p class="text-[11px] text-slate-400 text-center leading-relaxed">
+          Downloads are completely direct, free, and hosted locally on our high-speed mirrors.
+        </p>
+      </div>
+
+      <!-- Quick Tips Card -->
+      <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-sm space-y-4">
+        <h4 class="font-bold text-xs uppercase tracking-wider text-brand-400">Safe Downloading Guide</h4>
+        <ul class="text-[11px] text-slate-300 space-y-2 list-none pl-0">
+          <li class="flex gap-2">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5 shrink-0 text-brand-400"></i>
+            <span>Do not open files from untrusted third parties. All our uploads are MD5 checksummed.</span>
+          </li>
+          <li class="flex gap-2">
+            <i data-lucide="terminal" class="w-3.5 h-3.5 shrink-0 text-brand-400"></i>
+            <span>Run installer program files as an Administrator to ensure proper system installation.</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Related suggestions list -->
+  <% if (typeof suggestions !== 'undefined' && suggestions.length > 0) { %>
+    <div class="mt-16">
+      <div class="flex items-center gap-2 mb-6 border-b border-slate-200 pb-3">
+        <div class="bg-slate-700 text-white p-1 rounded-md">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">You May Also Like</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% suggestions.forEach(function(item) { %>
+          <%- include('partials/software_card', { item: item }) %>
+        <% }); %>
+      </div>
+    </div>
+  <% } %>
+
+</div>
+
+<%- include('partials/footer') %>

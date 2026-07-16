@@ -1,0 +1,94 @@
+<%- include('partials/header') %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow space-y-12">
+
+  <!-- Main Download Waiting box -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-8 sm:p-12 text-center shadow-sm max-w-2xl mx-auto">
+    
+    <!-- Software Mini Identity -->
+    <div class="flex items-center justify-center gap-3 mb-6">
+      <div class="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
+        <% if (software.icon_image) { %>
+          <img src="/storage/images/<%= software.icon_image %>" alt="<%= software.name %>" class="w-full h-full object-cover">
+        <% } else { %>
+          <i data-lucide="package" class="w-6 h-6 text-slate-400"></i>
+        <% } %>
+      </div>
+      <div class="text-left">
+        <h2 class="font-bold text-slate-800 text-base"><%= software.name %></h2>
+        <p class="text-slate-400 text-xs mt-0.5">Size: <%= software.size %> • Version: <%= software.version || 'Latest' %></p>
+      </div>
+    </div>
+
+    <!-- Interstitial Wait Indicator -->
+    <div id="loading-spinner" class="py-8 space-y-4">
+      <div class="w-12 h-12 border-4 border-slate-100 border-t-brand-600 rounded-full animate-spin-custom mx-auto"></div>
+      <p id="loader-status" class="text-slate-700 text-sm font-semibold">
+        Generating secure download link...
+      </p>
+      <p class="text-slate-400 text-xs">
+        Please wait <span id="countdown" data-duration="<%= config.download.loaderDurationSeconds %>" class="font-bold text-slate-800 text-sm"><%= config.download.loaderDurationSeconds %></span> seconds.
+      </p>
+    </div>
+
+    <!-- Dynamic Actions area (Initially Hidden, shown via main.js on countdown completion) -->
+    <div id="action-area" class="hidden py-6 space-y-4 flex flex-col items-center">
+      <button 
+        id="download-trigger" 
+        data-software-id="<%= software.id %>"
+        data-ads-enabled="<%= config.ads.enabled %>"
+        data-popunder-enabled="<%= config.ads.popunder.enabled %>"
+        data-popunder-zone="<%= config.ads.popunder.zoneId %>"
+        data-smartlink-enabled="<%= config.ads.smartlink.enabled %>"
+        data-smartlink-zone="<%= config.ads.smartlink.zoneId %>"
+        class="bg-brand-600 hover:bg-brand-700 text-white font-bold text-base py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2.5 focus:outline-none"
+      >
+        <i data-lucide="download" class="w-5 h-5"></i>
+        <span>Click here to download</span>
+      </button>
+      
+      <p class="text-xs text-slate-400 leading-relaxed">
+        If the download does not start automatically, click the button above.<br>
+        <a href="/software/<%= software.id %>/<%= software.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') %>" class="text-brand-600 hover:underline">Or, go back to details page</a>
+      </p>
+    </div>
+
+    <!-- Security Check Stamp -->
+    <div class="mt-8 border-t border-slate-100 pt-6 flex items-center justify-center gap-6 text-slate-400 text-xs">
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+        <span>Secure Connection</span>
+      </span>
+      <span class="h-3 w-[1px] bg-slate-200"></span>
+      <span class="flex items-center gap-1.5">
+        <i data-lucide="badge-check" class="w-4 h-4 text-emerald-500"></i>
+        <span>Virus Checked</span>
+      </span>
+    </div>
+
+  </div>
+
+  <!-- Dynamic Social Bar Integration (Dismissible, only runs during waiting period on download page) -->
+  <%- include('partials/ad_slot', { format: 'socialBar' }) %>
+
+  <!-- Related Recommendations Suggestions list -->
+  <% if (typeof suggestions !== 'undefined' && suggestions.length > 0) { %>
+    <div class="border-t border-slate-200 pt-10">
+      <div class="flex items-center gap-2 mb-6">
+        <div class="bg-slate-700 text-white p-1 rounded-md">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">Recommended Downloads</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <% suggestions.forEach(function(item) { %>
+          <%- include('partials/software_card', { item: item }) %>
+        <% }); %>
+      </div>
+    </div>
+  <% } %>
+
+</div>
+
+<%- include('partials/footer') %>

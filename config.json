@@ -1,0 +1,62 @@
+{
+  "site": {
+    "name": "Software Hub Pro",
+    "tagline": "Free Windows Software Downloads",
+    "itemsPerPage": 12,
+    "port": 3000
+  },
+  "paths": {
+    "storage": "./storage",
+    "database": "./database/database.sqlite"
+  },
+  "download": {
+    "loaderDurationSeconds": 5,
+    "suggestionsCount": 4
+  },
+  "ads": {
+    "provider": "adsterra",
+    "enabled": true,
+    "popunder": {
+      "enabled": true,
+      "zoneId": "",
+      "page": "download",
+      "frequencyCapPerSession": 1,
+      "devices": [
+        "desktop"
+      ]
+    },
+    "smartlink": {
+      "enabled": true,
+      "zoneId": "",
+      "page": "download",
+      "frequencyCapPerSession": 1,
+      "devices": [
+        "mobile"
+      ]
+    },
+    "nativeBanner": {
+      "enabled": true,
+      "zoneId": "",
+      "pages": [
+        "home",
+        "search"
+      ]
+    },
+    "banner": {
+      "enabled": true,
+      "zoneId": "",
+      "pages": [
+        "softwareDetail"
+      ]
+    },
+    "socialBar": {
+      "enabled": true,
+      "zoneId": "",
+      "page": "download",
+      "dismissible": true
+    }
+  },
+  "admin": {
+    "sessionSecret": "dfa97b2d5612c8a49c63b467e91f0a82"
+  }
+}

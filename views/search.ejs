@@ -1,0 +1,83 @@
+<%- include('partials/header') %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-8">
+  
+  <!-- Header Title bar -->
+  <div class="border-b border-slate-200 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
+        <% if (searchQuery) { %>
+          Search Results for "<span class="text-brand-600"><%= searchQuery %></span>"
+        <% } else if (activeCategory) { %>
+          Explore Category: <span class="text-brand-600"><%= activeCategory.name %></span>
+        <% } else { %>
+          Explore Software Repository
+        <% } %>
+      </h1>
+      
+      <p class="text-xs text-slate-400 mt-1">
+        <% if (results.length > 0) { %>
+          Found <%= results.length %> verified software program(s).
+        <% } else { %>
+          No verified software matching your query.
+        <% } %>
+      </p>
+    </div>
+
+    <!-- Active Filters Details -->
+    <div class="flex items-center gap-2">
+      <% if (activeCategory) { %>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 text-brand-700">
+          <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+          <span><%= activeCategory.name %></span>
+          <a href="/search<%= searchQuery ? '?q=' + searchQuery : '' %>" class="text-brand-400 hover:text-brand-700 ml-1">
+            <i data-lucide="x" class="w-3 h-3"></i>
+          </a>
+        </span>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Search Results Listing Grid -->
+  <% if (results && results.length > 0) { %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% results.forEach(function(item, idx) { %>
+        <%- include('partials/software_card', { item: item }) %>
+        
+        <!-- Blended Native Ad Insertion -->
+        <% if (idx === 2 && config.ads.enabled && config.ads.nativeBanner.enabled) { %>
+          <%- include('partials/ad_slot', { format: 'nativeBanner' }) %>
+        <% } %>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <!-- Empty Search State -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-12 text-center max-w-lg mx-auto shadow-sm my-8">
+      <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="search" class="w-6 h-6"></i>
+      </div>
+      <h3 class="font-bold text-slate-800 text-base">No matches found</h3>
+      <p class="text-slate-400 text-xs mt-1.5 leading-relaxed">
+        We couldn't find any software matching "<%= searchQuery %>". Check your spelling, try adjusting your filters, or browse all categories above.
+      </p>
+      
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <a 
+          href="/" 
+          class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm transition-colors"
+        >
+          Return Home
+        </a>
+        <a 
+          href="/search" 
+          class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
+        >
+          View All Software
+        </a>
+      </div>
+    </div>
+  <% } %>
+
+</div>
+
+<%- include('partials/footer') %>

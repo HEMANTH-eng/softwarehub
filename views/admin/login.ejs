@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= siteTitle %></title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="h-full flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+
+  <div class="w-full max-w-md">
+    
+    <!-- Logo branding -->
+    <div class="text-center mb-8">
+      <div class="inline-flex bg-blue-600 text-white p-3 rounded-2xl shadow-lg shadow-blue-500/20 mb-3">
+        <i data-lucide="shield-check" class="w-8 h-8"></i>
+      </div>
+      <h2 class="text-2xl font-extrabold tracking-tight text-white"><%= config.site.name %> Panel</h2>
+      <p class="text-xs text-slate-400 mt-1.5">Please sign in to manage your site configuration</p>
+    </div>
+
+    <!-- Login card -->
+    <div class="bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl p-8 shadow-xl">
+      
+      <!-- Error Display -->
+      <% if (error) { %>
+        <div class="bg-red-500/10 border border-red-500/25 rounded-xl p-4 mb-6 flex items-start gap-3">
+          <i data-lucide="alert-circle" class="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i>
+          <div>
+            <h4 class="text-xs font-bold text-red-200">Authentication Failed</h4>
+            <p class="text-[11px] text-red-300 mt-0.5"><%= error %></p>
+          </div>
+        </div>
+      <% } %>
+
+      <form action="/admin/login" method="POST" class="space-y-5">
+        
+        <!-- Username input -->
+        <div class="space-y-1.5">
+          <label for="username" class="text-xs font-bold text-slate-300 block">Username</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="text" 
+              name="username" 
+              id="username" 
+              required 
+              placeholder="admin"
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-900/50 border border-slate-700 focus:border-blue-500 text-sm rounded-xl text-white placeholder-slate-500 focus:outline-none transition-colors"
+            >
+          </div>
+        </div>
+
+        <!-- Password input -->
+        <div class="space-y-1.5">
+          <label for="password" class="text-xs font-bold text-slate-300 block">Password</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="password" 
+              name="password" 
+              id="password" 
+              required 
+              placeholder="••••••••"
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-900/50 border border-slate-700 focus:border-blue-500 text-sm rounded-xl text-white placeholder-slate-500 focus:outline-none transition-colors"
+            >
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold py-3 rounded-xl shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 transition-all flex items-center justify-center gap-2 focus:outline-none"
+        >
+          <span>Sign In</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+      </form>
+
+    </div>
+
+    <!-- Back to site link -->
+    <div class="text-center mt-6">
+      <a href="/" class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span>Return to public website</span>
+      </a>
+    </div>
+
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= siteTitle %></title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
+
+  <!-- Top Admin Nav Banner -->
+  <header class="bg-slate-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="bg-blue-600 p-2 rounded-lg text-white">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <span class="font-extrabold text-base tracking-tight"><%= config.site.name %> Admin Panel</span>
+        </div>
+
+        <div class="flex items-center space-x-4 text-sm font-medium">
+          <span class="text-slate-400">Welcome, <strong><%= adminUsername %></strong></span>
+          <div class="h-4 w-[1px] bg-slate-700"></div>
+          <a href="/" target="_blank" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <span>View Site</span>
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tab Bar -->
+  <div class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <a href="/admin/dashboard" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin/software" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="package" class="w-4 h-4"></i>
+          <span>Manage Software</span>
+        </a>
+        <a href="/admin/categories" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-blue-600 text-blue-600">
+          <i data-lucide="tag" class="w-4 h-4"></i>
+          <span>Categories</span>
+        </a>
+        <a href="/admin/requests" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>App Requests</span>
+        </a>
+        <a href="/admin/settings" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Ad & Site Settings</span>
+        </a>
+        <a href="/admin/logout" class="py-4 px-1 border-b-2 border-transparent font-bold text-sm text-red-500 hover:text-red-700 flex items-center gap-2 ml-auto">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Body Content Grid -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-6">
+    
+    <div>
+      <h1 class="text-xl font-bold text-slate-900">Category Directory Management</h1>
+      <p class="text-xs text-slate-400 mt-0.5">Control software classification structures and taxonomy.</p>
+    </div>
+
+    <!-- Error Alert Display (e.g. Safeguard check warnings) -->
+    <% if (error) { %>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3 shadow-sm">
+        <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i>
+        <div>
+          <h4 class="text-xs font-bold text-amber-800">Safety Check Safeguard</h4>
+          <p class="text-[11px] text-amber-700 mt-0.5"><%= error %></p>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      
+      <!-- Left 2-Cols: Categories List -->
+      <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider">
+                <th class="p-4">Name</th>
+                <th class="p-4">Slug</th>
+                <th class="p-4 text-center">Software Count</th>
+                <th class="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <% if (categoryList && categoryList.length > 0) { %>
+                <% categoryList.forEach(function(cat) { %>
+                  <tr class="hover:bg-slate-50/50 transition-colors">
+                    
+                    <!-- Name -->
+                    <td class="p-4 font-bold text-slate-800 text-sm"><%= cat.name %></td>
+                    
+                    <!-- Slug -->
+                    <td class="p-4 text-slate-500 font-mono text-[11px]"><%= cat.slug %></td>
+                    
+                    <!-- Software Count -->
+                    <td class="p-4 text-center">
+                      <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold <%= cat.software_count > 0 ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-400' %>">
+                        <%= cat.software_count %> listings
+                      </span>
+                    </td>
+                    
+                    <!-- Actions -->
+                    <td class="p-4 text-right whitespace-nowrap">
+                      <div class="inline-flex gap-2">
+                        <!-- Edit Trigger Button -->
+                        <button 
+                          class="edit-cat-btn p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-600 hover:text-slate-800 transition-colors"
+                          data-id="<%= cat.id %>"
+                          data-name="<%= cat.name %>"
+                        >
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        </button>
+                        
+                        <!-- Delete Form -->
+                        <form action="/admin/categories/delete/<%= cat.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                          <button type="submit" class="p-1.5 bg-red-50 hover:bg-red-100 rounded-lg text-red-500 hover:text-red-700 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="4" class="p-8 text-center text-slate-400">
+                    <i data-lucide="tag" class="w-8 h-8 text-slate-300 mx-auto mb-2"></i>
+                    <p class="font-semibold">No categories registered.</p>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right 1-Col: Add Category Form -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <h3 class="font-bold text-slate-800 text-sm border-b border-slate-100 pb-3">Create Category</h3>
+        
+        <form action="/admin/categories/add" method="POST" class="space-y-4">
+          <div class="space-y-1.5">
+            <label for="cat-name" class="text-xs font-bold text-slate-500">Category Name *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="cat-name" 
+              required 
+              placeholder="e.g. Utility Tools"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+          </div>
+          
+          <button 
+            type="submit" 
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 px-4 rounded-lg shadow transition-all focus:outline-none flex items-center justify-center gap-1"
+          >
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Add Category</span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Edit Category Modal Overlay (Initially Hidden) -->
+  <div id="cat-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" id="modal-backdrop"></div>
+    <div class="flex min-h-full items-center justify-center p-4 text-center">
+      <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-md border border-slate-100 p-6">
+        
+        <button id="close-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+
+        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2.5 mb-4">
+          Edit Category Name
+        </h3>
+
+        <form id="edit-cat-form" action="" method="POST" class="space-y-4">
+          <div class="space-y-1.5">
+            <label for="edit-cat-name" class="text-xs font-bold text-slate-500">Category Name *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="edit-cat-name" 
+              required
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+          </div>
+          
+          <div class="flex justify-end gap-2.5 pt-2">
+            <button 
+              type="button" 
+              id="cancel-modal-btn" 
+              class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold hover:bg-slate-50 text-slate-500 transition-colors focus:outline-none"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow transition-all focus:outline-none"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12 shrink-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span><%= config.site.name %> Admin Panel Panel Dashboard</span>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  
+  <script>
+    const modal = document.getElementById('cat-modal');
+    const form = document.getElementById('edit-cat-form');
+    const input = document.getElementById('edit-cat-name');
+
+    const showModal = (id, name) => {
+      form.action = '/admin/categories/edit/' + id;
+      input.value = name;
+      modal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    };
+
+    const closeModal = () => {
+      modal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    };
+
+    document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+    document.getElementById('cancel-modal-btn').addEventListener('click', closeModal);
+    document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+
+    document.querySelectorAll('.edit-cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        showModal(btn.dataset.id, btn.dataset.name);
+      });
+    });
+  </script>
+
+</body>
+</html>

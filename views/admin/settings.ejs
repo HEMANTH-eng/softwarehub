@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= siteTitle %></title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
+
+  <!-- Admin Navigation Top Banner -->
+  <header class="bg-slate-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="bg-blue-600 p-2 rounded-lg text-white">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <span class="font-extrabold text-base tracking-tight"><%= config.site.name %> Admin Panel</span>
+        </div>
+
+        <div class="flex items-center space-x-4 text-sm font-medium">
+          <span class="text-slate-400">Welcome, <strong><%= adminUsername %></strong></span>
+          <div class="h-4 w-[1px] bg-slate-700"></div>
+          <a href="/" target="_blank" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <span>View Site</span>
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tab Bar -->
+  <div class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <a href="/admin/dashboard" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin/software" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="package" class="w-4 h-4"></i>
+          <span>Manage Software</span>
+        </a>
+        <a href="/admin/categories" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="tag" class="w-4 h-4"></i>
+          <span>Categories</span>
+        </a>
+        <a href="/admin/requests" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>App Requests</span>
+        </a>
+        <a href="/admin/settings" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-blue-600 text-blue-600">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Ad & Site Settings</span>
+        </a>
+        <a href="/admin/logout" class="py-4 px-1 border-b-2 border-transparent font-bold text-sm text-red-500 hover:text-red-700 flex items-center gap-2 ml-auto">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings form Main panel -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-6">
+    
+    <div>
+      <h1 class="text-xl font-bold text-slate-900">Application Configuration</h1>
+      <p class="text-xs text-slate-400 mt-0.5">Adjust branding settings, page parameters, and ad monetization networks centrally.</p>
+    </div>
+
+    <!-- Success Message Toast Alert -->
+    <% if (successMsg) { %>
+      <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl p-4 flex items-start gap-3 shadow-sm">
+        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i>
+        <div>
+          <h4 class="text-xs font-bold">Configuration Updated</h4>
+          <p class="text-[11px] text-emerald-700 mt-0.5"><%= successMsg %></p>
+        </div>
+      </div>
+    <% } %>
+
+    <form action="/admin/settings" method="POST" class="space-y-8">
+      
+      <!-- Section 1: General Site Settings -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <h3 class="font-bold text-slate-800 text-sm border-b border-slate-100 pb-3 flex items-center gap-2">
+          <i data-lucide="globe" class="w-4 h-4 text-slate-400"></i>
+          <span>Branding & Layout Settings</span>
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label for="site-name" class="text-xs font-bold text-slate-500">Site Name</label>
+            <input 
+              type="text" 
+              name="site_name" 
+              id="site-name" 
+              required
+              value="<%= config.site.name %>"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+          </div>
+          
+          <div class="space-y-1">
+            <label for="site-tagline" class="text-xs font-bold text-slate-500">Site Tagline</label>
+            <input 
+              type="text" 
+              name="site_tagline" 
+              id="site-tagline" 
+              required
+              value="<%= config.site.tagline %>"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label for="items-page" class="text-xs font-bold text-slate-500">Directory Listings Per Page</label>
+            <input 
+              type="number" 
+              name="items_per_page" 
+              id="items-page" 
+              required
+              min="1"
+              max="100"
+              value="<%= config.site.itemsPerPage %>"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+          </div>
+          
+          <div class="space-y-1">
+            <label for="site-port" class="text-xs font-bold text-slate-500">Express Node.js Port (Requires server restart)</label>
+            <input 
+              type="number" 
+              name="site_port" 
+              id="site-port" 
+              required
+              value="<%= config.site.port %>"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Download Interstitial Settings -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <h3 class="font-bold text-slate-800 text-sm border-b border-slate-100 pb-3 flex items-center gap-2">
+          <i data-lucide="loader" class="w-4 h-4 text-slate-400"></i>
+          <span>Download Timer Settings</span>
+        </h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label for="loader-duration" class="text-xs font-bold text-slate-500">Loader Wait Duration (Seconds)</label>
+            <input 
+              type="number" 
+              name="loader_duration" 
+              id="loader-duration" 
+              required
+              min="1"
+              max="60"
+              value="<%= config.download.loaderDurationSeconds %>"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+          </div>
+          
+          <div class="space-y-1">
+            <label for="suggestions-count" class="text-xs font-bold text-slate-500">Related Recommendations Suggestions Count</label>
+            <input 
+              type="number" 
+              name="suggestions_count" 
+              id="suggestions-count" 
+              required
+              min="1"
+              max="12"
+              value="<%= config.download.suggestionsCount %>"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Adsterra Monetization settings -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+            <i data-lucide="megaphone" class="w-4 h-4 text-slate-400"></i>
+            <span>Adsterra Monetization Placements</span>
+          </h3>
+          
+          <!-- Global Ads Switcher -->
+          <label class="inline-flex items-center gap-2 cursor-pointer">
+            <span class="text-xs font-bold text-slate-500">Global Ads Enabled</span>
+            <input 
+              type="checkbox" 
+              name="ads_enabled" 
+              class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+              <%= config.ads.enabled ? 'checked' : '' %>
+            >
+          </label>
+        </div>
+
+        <div class="space-y-5 divide-y divide-slate-100">
+          
+          <!-- Popunder (Highest intent, triggered on click download desktop) -->
+          <div class="pt-0 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-bold text-slate-800">Popunder Ad (Desktop only)</h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">Fires once per session on click download confirmation button on desktop devices.</p>
+              </div>
+              <input 
+                type="checkbox" 
+                name="ad_popunder_enabled" 
+                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                <%= config.ads.popunder.enabled ? 'checked' : '' %>
+              >
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400">Adsterra Popunder Zone ID</label>
+                <input 
+                  type="text" 
+                  name="ad_popunder_zone_id" 
+                  value="<%= config.ads.popunder.zoneId %>"
+                  placeholder="Enter Zone ID"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Smartlink (Mobile counterpart to popunder) -->
+          <div class="pt-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-bold text-slate-800">Smartlink Ad (Mobile only)</h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">Fires on mobile download clicks in place of popunders (prevents poor browser redirects).</p>
+              </div>
+              <input 
+                type="checkbox" 
+                name="ad_smartlink_enabled" 
+                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                <%= config.ads.smartlink.enabled ? 'checked' : '' %>
+              >
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400">Adsterra Smartlink Zone ID</label>
+                <input 
+                  type="text" 
+                  name="ad_smartlink_zone_id" 
+                  value="<%= config.ads.smartlink.zoneId %>"
+                  placeholder="Enter Zone ID"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Native Banner (Blends inside Software grids) -->
+          <div class="pt-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-bold text-slate-800">Native Banner Grid Ad</h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">Blends naturally inside the Home directory grid and Search results grid (positioned in slot #4).</p>
+              </div>
+              <input 
+                type="checkbox" 
+                name="ad_native_enabled" 
+                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                <%= config.ads.nativeBanner.enabled ? 'checked' : '' %>
+              >
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400">Adsterra Native Banner Zone ID</label>
+                <input 
+                  type="text" 
+                  name="ad_native_zone_id" 
+                  value="<%= config.ads.nativeBanner.zoneId %>"
+                  placeholder="Enter Zone ID"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Banner (Horizontal unit in details card) -->
+          <div class="pt-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-bold text-slate-800">Standard horizontal Banner (728x90)</h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">Renders below the details card on the Software Detail Page (safely away from CTA buttons).</p>
+              </div>
+              <input 
+                type="checkbox" 
+                name="ad_banner_enabled" 
+                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                <%= config.ads.banner.enabled ? 'checked' : '' %>
+              >
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400">Adsterra Banner Zone ID</label>
+                <input 
+                  type="text" 
+                  name="ad_banner_zone_id" 
+                  value="<%= config.ads.banner.zoneId %>"
+                  placeholder="Enter Zone ID"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Social Bar (Floating box) -->
+          <div class="pt-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-bold text-slate-800">Social Bar floating ad</h4>
+                <p class="text-[10px] text-slate-400 mt-0.5">Floating widgets at the bottom of the screen, only appearing on the Download Interstitial Page while waiting.</p>
+              </div>
+              <input 
+                type="checkbox" 
+                name="ad_social_enabled" 
+                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                <%= config.ads.socialBar.enabled ? 'checked' : '' %>
+              >
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-400">Adsterra Social Bar Zone ID</label>
+                <input 
+                  type="text" 
+                  name="ad_social_zone_id" 
+                  value="<%= config.ads.socialBar.zoneId %>"
+                  placeholder="Enter Zone ID"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Submit Footer -->
+      <div class="flex justify-end gap-3">
+        <a 
+          href="/admin/dashboard" 
+          class="px-5 py-3 border border-slate-200 rounded-xl text-xs font-semibold hover:bg-slate-50 text-slate-500 transition-colors focus:outline-none"
+        >
+          Discard Changes
+        </a>
+        
+        <button 
+          type="submit" 
+          class="px-6 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl text-xs font-semibold shadow-md transition-all focus:outline-none flex items-center gap-1.5"
+        >
+          <i data-lucide="save" class="w-4 h-4"></i>
+          <span>Save Configuration</span>
+        </button>
+      </div>
+
+    </form>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12 shrink-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span><%= config.site.name %> Admin Panel Panel Dashboard</span>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+
+</body>
+</html>

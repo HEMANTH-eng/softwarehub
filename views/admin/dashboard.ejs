@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= siteTitle %></title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
+
+  <!-- Admin Top Banner Header -->
+  <header class="bg-slate-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="bg-blue-600 p-2 rounded-lg text-white">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <span class="font-extrabold text-base tracking-tight"><%= config.site.name %> Admin Panel</span>
+        </div>
+
+        <div class="flex items-center space-x-4 text-sm font-medium">
+          <span class="text-slate-400">Welcome, <strong><%= adminUsername %></strong></span>
+          <div class="h-4 w-[1px] bg-slate-700"></div>
+          <a href="/" target="_blank" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors">
+            <span>View Site</span>
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Navigation Tabs -->
+  <div class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <a 
+          href="/admin/dashboard" 
+          class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 transition-colors <%= activeTab === 'dashboard' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' %>"
+        >
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </a>
+        <a 
+          href="/admin/software" 
+          class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 transition-colors <%= activeTab === 'software' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' %>"
+        >
+          <i data-lucide="package" class="w-4 h-4"></i>
+          <span>Manage Software</span>
+        </a>
+        <a 
+          href="/admin/categories" 
+          class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 transition-colors <%= activeTab === 'categories' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' %>"
+        >
+          <i data-lucide="tag" class="w-4 h-4"></i>
+          <span>Categories</span>
+        </a>
+        <a 
+          href="/admin/requests" 
+          class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 transition-colors <%= activeTab === 'requests' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' %>"
+        >
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>App Requests</span>
+        </a>
+        <a 
+          href="/admin/settings" 
+          class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 transition-colors <%= activeTab === 'settings' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300' %>"
+        >
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Ad & Site Settings</span>
+        </a>
+        <a 
+          href="/admin/logout" 
+          class="py-4 px-1 border-b-2 border-transparent font-bold text-sm text-red-500 hover:text-red-700 flex items-center gap-2 transition-colors ml-auto"
+        >
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Main Content Grid -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-8">
+    
+    <!-- 5-Col Aggregate Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+      
+      <!-- Views count -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Total Views</span>
+          <span class="text-2xl font-black text-slate-800 mt-1 block"><%= stats.views.toLocaleString() %></span>
+        </div>
+        <div class="bg-indigo-50 text-indigo-600 p-3 rounded-xl">
+          <i data-lucide="eye" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Downloads count -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Total Downloads</span>
+          <span class="text-2xl font-black text-slate-800 mt-1 block"><%= stats.downloads.toLocaleString() %></span>
+        </div>
+        <div class="bg-emerald-50 text-emerald-600 p-3 rounded-xl">
+          <i data-lucide="download" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Software listings count -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Software Listings</span>
+          <span class="text-2xl font-black text-slate-800 mt-1 block"><%= stats.software %></span>
+        </div>
+        <div class="bg-blue-50 text-blue-600 p-3 rounded-xl">
+          <i data-lucide="package" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Categories count -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Categories</span>
+          <span class="text-2xl font-black text-slate-800 mt-1 block"><%= stats.categories %></span>
+        </div>
+        <div class="bg-violet-50 text-violet-600 p-3 rounded-xl">
+          <i data-lucide="tag" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Pending Requests Count -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between shadow-sm">
+        <div>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Pending Requests</span>
+          <span class="text-2xl font-black text-slate-800 mt-1 block"><%= stats.pendingRequests %></span>
+        </div>
+        <div class="bg-amber-50 text-amber-600 p-3 rounded-xl">
+          <i data-lucide="message-square" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Telemetry Graph Section -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-center gap-2 mb-6">
+        <i data-lucide="trending-up" class="w-5 h-5 text-slate-400"></i>
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Download Trends (Last 7 Days)</h3>
+      </div>
+      
+      <% if (chartData && chartData.length > 0) { %>
+        <!-- Render clean SVG chart -->
+        <% 
+          const maxCount = Math.max(...chartData.map(d => d.count), 5);
+          const chartHeight = 140;
+          const chartWidth = 700;
+          const barWidth = 60;
+          const barGap = 35;
+        %>
+        <div class="overflow-x-auto">
+          <svg class="w-full min-w-[600px] h-48" viewBox="0 0 <%= chartWidth %> 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid Lines -->
+            <line x1="50" y1="20" x2="<%= chartWidth - 20 %>" y2="20" stroke="#f1f5f9" stroke-width="1" />
+            <line x1="50" y1="80" x2="<%= chartWidth - 20 %>" y2="80" stroke="#f1f5f9" stroke-width="1" />
+            <line x1="50" y1="140" x2="<%= chartWidth - 20 %>" y2="140" stroke="#f1f5f9" stroke-width="1" />
+            <line x1="50" y1="160" x2="<%= chartWidth - 20 %>" y2="160" stroke="#cbd5e1" stroke-width="2" />
+            
+            <!-- Axis labels -->
+            <text x="40" y="25" text-anchor="end" font-family="sans-serif" font-size="10" fill="#94a3b8"><%= Math.round(maxCount) %></text>
+            <text x="40" y="85" text-anchor="end" font-family="sans-serif" font-size="10" fill="#94a3b8"><%= Math.round(maxCount / 2) %></text>
+            <text x="40" y="145" text-anchor="end" font-family="sans-serif" font-size="10" fill="#94a3b8">0</text>
+
+            <!-- Render columns -->
+            <% chartData.forEach(function(dayData, idx) { %>
+              <% 
+                const percentage = dayData.count / maxCount;
+                const barHeight = percentage * chartHeight;
+                const x = 70 + idx * (barWidth + barGap);
+                const y = 160 - barHeight;
+              %>
+              <!-- Column bar -->
+              <rect 
+                x="<%= x %>" 
+                y="<%= y %>" 
+                width="<%= barWidth %>" 
+                height="<%= barHeight %>" 
+                rx="6" 
+                fill="#3b82f6" 
+                class="hover:fill-blue-600 transition-colors"
+              />
+              
+              <!-- Value Counter -->
+              <text 
+                x="<%= x + (barWidth / 2) %>" 
+                y="<%= y - 8 %>" 
+                text-anchor="middle" 
+                font-family="sans-serif" 
+                font-size="11" 
+                font-weight="bold"
+                fill="#1e293b"
+              >
+                <%= dayData.count %>
+              </text>
+              
+              <!-- Label Date -->
+              <text 
+                x="<%= x + (barWidth / 2) %>" 
+                y="180" 
+                text-anchor="middle" 
+                font-family="sans-serif" 
+                font-size="10" 
+                fill="#64748b"
+              >
+                <%= new Date(dayData.day).toLocaleDateString(undefined, {month: 'short', day: 'numeric'}) %>
+              </text>
+            <% }); %>
+          </svg>
+        </div>
+      <% } else { %>
+        <div class="h-32 flex items-center justify-center border border-dashed border-slate-200 rounded-xl">
+          <p class="text-xs text-slate-400">No telemetry log records available for the last 7 days yet.</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Data Tables Grid: Top downloaded and recent activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Top Software -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <i data-lucide="star" class="text-amber-500 w-4 h-4"></i>
+          <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Top Downloaded</h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 text-slate-400 font-semibold">
+                <th class="py-2.5">Name</th>
+                <th class="py-2.5">Category</th>
+                <th class="py-2.5 text-right">Downloads</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (topSoftware && topSoftware.length > 0) { %>
+                <% topSoftware.forEach(function(sw) { %>
+                  <tr class="border-b border-slate-50 hover:bg-slate-50">
+                    <td class="py-3 font-bold text-slate-800"><%= sw.name %></td>
+                    <td class="py-3 text-slate-500"><%= sw.category_name %></td>
+                    <td class="py-3 text-right font-black text-slate-800"><%= sw.download_count.toLocaleString() %></td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="3" class="py-4 text-center text-slate-400">No data found.</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Downloads -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+          <i data-lucide="activity" class="text-blue-500 w-4 h-4"></i>
+          <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider">Recent Activity Log</h3>
+        </div>
+
+        <div class="flow-root">
+          <ul class="-my-4 divide-y divide-slate-100 pl-0 list-none">
+            <% if (recentDownloads && recentDownloads.length > 0) { %>
+              <% recentDownloads.forEach(function(log) { %>
+                <li class="py-3 flex items-center justify-between text-xs">
+                  <div class="min-w-0">
+                    <p class="font-bold text-slate-800 truncate">
+                      Downloaded: <span class="text-blue-600"><%= log.software_name %></span>
+                    </p>
+                    <p class="text-[10px] text-slate-400 mt-0.5"><%= new Date(log.downloaded_at).toLocaleString() %></p>
+                  </div>
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[10px] font-bold text-emerald-700 uppercase tracking-wide">
+                    <i data-lucide="check-circle" class="w-3 h-3"></i>
+                    <span>OK</span>
+                  </span>
+                </li>
+              <% }); %>
+            <% } else { %>
+              <li class="py-4 text-center text-slate-400 text-xs">No downloads logged yet.</li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12 shrink-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <span><%= config.site.name %> Admin Panel Panel Dashboard</span>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

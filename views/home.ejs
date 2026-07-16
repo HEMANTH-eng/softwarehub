@@ -1,0 +1,147 @@
+<%- include('partials/header') %>
+
+  <!-- Hero Banner Section -->
+  <div
+    class="bg-gradient-to-r from-slate-900 via-slate-800 to-brand-950 text-white py-12 px-4 sm:px-6 lg:px-8 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-8">
+      <div class="max-w-2xl">
+        <span
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/20 text-brand-400 mb-4 border border-brand-500/20">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+          <span>100% Virus-Free Handpicked Software</span>
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <%= tagline %>
+        </h1>
+        <p class="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed">
+          Discover and download clean, verified Windows utilities, browsers, security tools, and productivity
+          applications instantly. No accounts required.
+        </p>
+      </div>
+
+      <!-- Hero Callout Statistics -->
+      <div class="flex items-center gap-6 self-start md:self-center shrink-0">
+        <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-center min-w-[100px]">
+          <div class="text-xl font-bold text-white">
+            <%= allSoftware.length> 0 ? 'Verified' : 'Active' %>
+          </div>
+          <div class="text-[10px] text-black mt-1 uppercase font-semibold">Repository</div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-center min-w-[100px]">
+          <div class="text-xl font-bold text-brand-400">Direct</div>
+          <div class="text-[10px] text-black mt-1 uppercase font-semibold">Downloads</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Body Grid Container -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+    <!-- Featured Software Section -->
+    <% if (typeof featured !=='undefined' && featured.length> 0) { %>
+      <div>
+        <div class="flex items-center gap-2 mb-6">
+          <div class="bg-brand-600 text-white p-1 rounded-md">
+            <i data-lucide="award" class="w-4 h-4"></i>
+          </div>
+          <h2 class="text-xl font-bold text-slate-900">Featured Software</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% featured.forEach(function(item) { %>
+            <%- include('partials/software_card', { item: item }) %>
+              <% }); %>
+        </div>
+      </div>
+      <% } %>
+
+        <!-- New Software Listings Section -->
+        <% if (typeof newSoftware !=='undefined' && newSoftware.length> 0) { %>
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-2">
+                <div class="bg-emerald-600 text-white p-1 rounded-md">
+                  <i data-lucide="clock" class="w-4 h-4"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900">Recently Updated</h2>
+              </div>
+              <a href="/search" class="text-xs font-semibold text-brand-600 hover:text-brand-700">Explore all updates
+                &rarr;</a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% newSoftware.forEach(function(item) { %>
+                <%- include('partials/software_card', { item: item }) %>
+                  <% }); %>
+            </div>
+          </div>
+          <% } %>
+
+            <!-- All Software List with blended native ad -->
+            <div>
+              <div class="flex items-center justify-between mb-6 border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2">
+                  <div class="bg-slate-700 text-white p-1 rounded-md">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                  </div>
+                  <h2 class="text-xl font-bold text-slate-900">All Software Directory</h2>
+                </div>
+                <span class="text-xs text-slate-400">Showing page <%= currentPage %> of <%= totalPages %></span>
+              </div>
+
+              <% if (allSoftware && allSoftware.length> 0) { %>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <% allSoftware.forEach(function(item, idx) { %>
+                    <%- include('partials/software_card', { item: item }) %>
+
+                      <!-- Blended Native Ad insertion in the grid -->
+                      <% if (idx===2 && config.ads.enabled && config.ads.nativeBanner.enabled) { %>
+                        <%- include('partials/ad_slot', { format: 'nativeBanner' }) %>
+                          <% } %>
+                            <% }); %>
+                </div>
+
+                <!-- Pagination controls -->
+                <% if (totalPages> 1) { %>
+                  <div class="flex items-center justify-center space-x-2 mt-10 border-t border-slate-100 pt-6">
+                    <!-- Previous page -->
+                    <% if (currentPage> 1) { %>
+                      <a href="/?page=<%= currentPage - 1 %>"
+                        class="px-4 py-2 border border-slate-200 text-sm font-semibold rounded-lg bg-white hover:bg-slate-50 transition-colors text-slate-600 flex items-center gap-1">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        <span>Prev</span>
+                      </a>
+                      <% } %>
+
+                        <!-- Pages index -->
+                        <% for(let i=1; i <=totalPages; i++) { %>
+                          <a href="/?page=<%= i %>"
+                            class="px-3.5 py-2 border text-sm font-semibold rounded-lg transition-colors <%= currentPage === i ? 'bg-brand-600 border-brand-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' %>">
+                            <%= i %>
+                          </a>
+                          <% } %>
+
+                            <!-- Next page -->
+                            <% if (currentPage < totalPages) { %>
+                              <a href="/?page=<%= currentPage + 1 %>"
+                                class="px-4 py-2 border border-slate-200 text-sm font-semibold rounded-lg bg-white hover:bg-slate-50 transition-colors text-slate-600 flex items-center gap-1">
+                                <span>Next</span>
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                              </a>
+                              <% } %>
+                  </div>
+                  <% } %>
+                    <% } else { %>
+                      <div class="bg-white border border-slate-200 rounded-xl p-12 text-center">
+                        <i data-lucide="package-open" class="w-12 h-12 text-slate-300 mx-auto mb-4"></i>
+                        <h3 class="font-bold text-slate-700 text-base">No software listings found</h3>
+                        <p class="text-xs text-slate-400 mt-1">Please log in to the admin panel and add software
+                          programs.</p>
+                      </div>
+                      <% } %>
+            </div>
+
+  </div>
+
+  <%- include('partials/footer') %>
