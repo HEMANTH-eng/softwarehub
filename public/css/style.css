@@ -69,3 +69,12 @@ textarea:focus-visible {
 .animate-spin-custom {
   animation: spin-custom 1s linear infinite;
 }
+
+/* Force light backgrounds and dark text on input elements for light-themed pages */
+body.bg-slate-50 input:not([type="checkbox"]):not([type="radio"]),
+body.bg-slate-50 select,
+body.bg-slate-50 textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important; /* slate-900 */
+}
+
