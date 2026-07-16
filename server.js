@@ -15,6 +15,21 @@ try {
 
 const app = express();
 
+const { exec } = require("child_process");
+
+exec("npm run seed", (error, stdout, stderr) => {
+  if (error) {
+    console.error("Seed error:", error);
+    return;
+  }
+
+  console.log(stdout);
+
+  if (stderr) {
+    console.log(stderr);
+  }
+});
+
 // Express EJS template engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
