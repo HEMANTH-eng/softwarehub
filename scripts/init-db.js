@@ -11,19 +11,17 @@ async function runSeed() {
   // Wait a moment for schema execution to complete
   await new Promise(resolve => setTimeout(resolve, 500));
   
-  // 1. Create Default Admin User (username: admin, password: admin12345)
-  const adminUsername = 'admin';
-  const adminPassword = 'admin12345';
+  // 1. Create Default Admin User (username: hemanth, password: bhemanth)
+  const adminUsername = 'hemanth';
+  const adminPassword = 'bhemanth';
   
-  const existingAdmin = await db.get('SELECT * FROM admin_users WHERE username = ?', [adminUsername]);
-  if (!existingAdmin) {
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(adminPassword, salt);
-    await db.run('INSERT INTO admin_users (username, password_hash) VALUES (?, ?)', [adminUsername, hash]);
-    console.log(`Default admin user created: Username: "${adminUsername}", Password: "${adminPassword}"`);
-  } else {
-    console.log('Admin user already exists.');
-  }
+  // Clear any existing admin users to update to the new credentials
+  await db.run('DELETE FROM admin_users');
+  
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(adminPassword, salt);
+  await db.run('INSERT INTO admin_users (username, password_hash) VALUES (?, ?)', [adminUsername, hash]);
+  console.log(`Default admin user created: Username: "${adminUsername}", Password: "${adminPassword}"`);
   
   // 2. Create Categories
   const categories = [
