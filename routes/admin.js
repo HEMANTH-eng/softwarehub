@@ -6,16 +6,23 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const db = require('../database/db');
 
-// Helper to load current config dynamically
-function getConfig() {
+// Helper to load current config (uses cached version from server.js)
+function getConfig(req) {
+  if (req && req.app && req.app.locals.getConfig) {
+    return req.app.locals.getConfig();
+  }
   const configPath = path.resolve(__dirname, '../config.json');
   return JSON.parse(fs.readFileSync(configPath, 'utf8'));
 }
 
-// Helper to save config
-function saveConfig(config) {
+// Helper to save config (invalidates cache after write)
+function saveConfig(config, req) {
   const configPath = path.resolve(__dirname, '../config.json');
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+  // Invalidate the in-memory config cache
+  if (req && req.app && req.app.locals.invalidateConfigCache) {
+    req.app.locals.invalidateConfigCache();
+  }
 }
 
 // Helper for slug generation
@@ -78,7 +85,7 @@ router.get('/login', (req, res) => {
   if (req.session && req.session.adminId) {
     return res.redirect('/admin/dashboard');
   }
-  const config = getConfig();
+  const config = getConfig(req);
   res.render('admin/login', {
     siteTitle: `Admin Login - ${config.site.name}`,
     error: null,
@@ -89,7 +96,7 @@ router.get('/login', (req, res) => {
 // POST Login Action
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  const config = getConfig();
+  const config = getConfig(req);
   
   try {
     const user = await db.get('SELECT * FROM admin_users WHERE username = ?', [username]);
@@ -122,7 +129,7 @@ router.get('/logout', (req, res) => {
 // --- ADMIN DASHBOARD ---
 router.get('/dashboard', requireAuth, async (req, res) => {
   try {
-    const config = getConfig();
+    const config = getConfig(req);
     
     // Aggregated telemetry statistics
     const catCountRow = await db.get('SELECT COUNT(*) as count FROM categories');
@@ -188,7 +195,7 @@ router.get('/dashboard', requireAuth, async (req, res) => {
 // GET Listings List
 router.get('/software', requireAuth, async (req, res) => {
   try {
-    const config = getConfig();
+    const config = getConfig(req);
     const softwareList = await db.all(
       `SELECT s.*, c.name as category_name 
        FROM software s 
@@ -362,7 +369,7 @@ router.post('/software/delete/:id', requireAuth, async (req, res) => {
 // GET list categories
 router.get('/categories', requireAuth, async (req, res) => {
   try {
-    const config = getConfig();
+    const config = getConfig(req);
     const categoryList = await db.all(
       `SELECT c.*, COUNT(s.id) as software_count 
        FROM categories c 
@@ -430,7 +437,7 @@ router.post('/categories/delete/:id', requireAuth, async (req, res) => {
     const swRow = await db.get('SELECT COUNT(*) as count FROM software WHERE category_id = ?', [categoryId]);
     const softwareCount = swRow ? swRow.count : 0;
     
-    const config = getConfig();
+    const config = getConfig(req);
     const categoryList = await db.all(
       `SELECT c.*, COUNT(s.id) as software_count 
        FROM categories c 
@@ -464,7 +471,7 @@ router.post('/categories/delete/:id', requireAuth, async (req, res) => {
 
 // GET Settings Panel
 router.get('/settings', requireAuth, (req, res) => {
-  const config = getConfig();
+  const config = getConfig(req);
   res.render('admin/settings', {
     siteTitle: `Site Configuration - ${config.site.name}`,
     config,
@@ -477,7 +484,7 @@ router.get('/settings', requireAuth, (req, res) => {
 // POST Update Settings Panel
 router.post('/settings', requireAuth, (req, res) => {
   try {
-    const current = getConfig();
+    const current = getConfig(req);
     
     // Parse form inputs and build updated config object
     const updated = {
@@ -531,7 +538,7 @@ router.post('/settings', requireAuth, (req, res) => {
       }
     };
     
-    saveConfig(updated);
+    saveConfig(updated, req);
     
     res.render('admin/settings', {
       siteTitle: `Site Configuration - ${updated.site.name}`,
@@ -551,7 +558,7 @@ router.post('/settings', requireAuth, (req, res) => {
 // GET App Requests list
 router.get('/requests', requireAuth, async (req, res) => {
   try {
-    const config = getConfig();
+    const config = getConfig(req);
     const requestsList = await db.all('SELECT * FROM app_requests ORDER BY created_at DESC');
     
     res.render('admin/requests', {

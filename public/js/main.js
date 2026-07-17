@@ -115,4 +115,96 @@ document.addEventListener('DOMContentLoaded', () => {
       socialBar.classList.add('hidden');
     }
   }
+
+  // 4. Back to Top Button
+  const backToTopBtn = document.getElementById('back-to-top');
+  if (backToTopBtn) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        backToTopBtn.classList.remove('hidden');
+        backToTopBtn.classList.add('flex');
+      } else {
+        backToTopBtn.classList.add('hidden');
+        backToTopBtn.classList.remove('flex');
+      }
+    });
+    
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // 5. Recently Viewed (localStorage-based tracking)
+  // Track current page if it's a software detail page
+  const detailPageMatch = window.location.pathname.match(/^\/software\/(\d+)\//);
+  if (detailPageMatch) {
+    const softwareId = detailPageMatch[1];
+    // Get software info from the page
+    const nameEl = document.querySelector('h1');
+    const iconEl = document.querySelector('.w-20.h-20 img, .w-20 img');
+    
+    if (nameEl) {
+      const recentItem = {
+        id: softwareId,
+        name: nameEl.textContent.trim(),
+        icon: iconEl ? iconEl.getAttribute('src') : null,
+        url: window.location.pathname,
+        timestamp: Date.now()
+      };
+
+      let recentlyViewed = [];
+      try {
+        recentlyViewed = JSON.parse(localStorage.getItem('recently_viewed') || '[]');
+      } catch (e) {
+        recentlyViewed = [];
+      }
+
+      // Remove duplicate if exists
+      recentlyViewed = recentlyViewed.filter(item => item.id !== softwareId);
+      // Add to front
+      recentlyViewed.unshift(recentItem);
+      // Keep only last 12
+      recentlyViewed = recentlyViewed.slice(0, 12);
+      
+      localStorage.setItem('recently_viewed', JSON.stringify(recentlyViewed));
+    }
+  }
+
+  // Render recently viewed section on home page
+  const recentlyViewedSection = document.getElementById('recently-viewed-section');
+  const recentlyViewedGrid = document.getElementById('recently-viewed-grid');
+  if (recentlyViewedSection && recentlyViewedGrid) {
+    let recentlyViewed = [];
+    try {
+      recentlyViewed = JSON.parse(localStorage.getItem('recently_viewed') || '[]');
+    } catch (e) {
+      recentlyViewed = [];
+    }
+
+    if (recentlyViewed.length > 0) {
+      recentlyViewedSection.classList.remove('hidden');
+      
+      recentlyViewed.slice(0, 6).forEach(item => {
+        const card = document.createElement('a');
+        card.href = item.url;
+        card.className = 'bg-white border border-slate-200 rounded-xl p-4 flex flex-col items-center gap-2 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center';
+        
+        const iconHtml = item.icon 
+          ? `<img src="${item.icon}" alt="${item.name}" class="w-10 h-10 rounded-lg object-cover" loading="lazy">`
+          : `<div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div>`;
+        
+        card.innerHTML = `
+          ${iconHtml}
+          <span class="text-xs font-semibold text-slate-700 truncate w-full">${item.name}</span>
+        `;
+        
+        recentlyViewedGrid.appendChild(card);
+      });
+
+      // Re-initialize lucide icons for the newly added content
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+    }
+  }
 });

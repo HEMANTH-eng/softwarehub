@@ -78,3 +78,43 @@ body.bg-slate-50 textarea {
   color: #0f172a !important; /* slate-900 */
 }
 
+/* Back to Top button transition */
+#back-to-top {
+  transform: translateY(10px);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#back-to-top:not(.hidden) {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Sort select styling */
+#sort-select {
+  background-image: none;
+}
+
+/* Line clamp utility for older browsers */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
