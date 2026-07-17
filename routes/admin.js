@@ -100,6 +100,8 @@ router.post('/login', async (req, res) => {
   
   try {
     const user = await db.get('SELECT * FROM admin_users WHERE username = ?', [username]);
+    console.log("LOGIN ATTEMPT:", username);
+    console.log("DATABASE USER:", user);
     
     if (user && bcrypt.compareSync(password, user.password_hash)) {
       req.session.adminId = user.id;
