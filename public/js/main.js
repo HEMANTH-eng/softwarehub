@@ -207,4 +207,37 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  // 6. Theme Toggle (Dark / Light Mode)
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+  const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+  if (themeToggleBtn && themeToggleDarkIcon && themeToggleLightIcon) {
+    // Function to update the icons based on whether dark class is present
+    function updateToggleIcons() {
+      if (document.documentElement.classList.contains('dark')) {
+        themeToggleLightIcon.classList.remove('hidden');
+        themeToggleDarkIcon.classList.add('hidden');
+      } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+        themeToggleLightIcon.classList.add('hidden');
+      }
+    }
+
+    // Initialize toggle state icon
+    updateToggleIcons();
+
+    // Toggle button click event
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('color-theme', 'light');
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('color-theme', 'dark');
+      }
+      updateToggleIcons();
+    });
+  }
 });

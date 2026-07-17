@@ -71,11 +71,20 @@ textarea:focus-visible {
 }
 
 /* Force light backgrounds and dark text on input elements for light-themed pages */
-body.bg-slate-50 input:not([type="checkbox"]):not([type="radio"]),
-body.bg-slate-50 select,
-body.bg-slate-50 textarea {
+html:not(.dark) body.bg-slate-50 input:not([type="checkbox"]):not([type="radio"]),
+html:not(.dark) body.bg-slate-50 select,
+html:not(.dark) body.bg-slate-50 textarea {
   background-color: #ffffff !important;
   color: #0f172a !important; /* slate-900 */
+}
+
+/* Force dark backgrounds and light text on input elements for dark mode */
+html.dark body.bg-slate-50 input:not([type="checkbox"]):not([type="radio"]),
+html.dark body.bg-slate-50 select,
+html.dark body.bg-slate-50 textarea {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f8fafc !important; /* slate-50 */
+  border-color: #334155 !important; /* slate-700 */
 }
 
 /* Back to Top button transition */

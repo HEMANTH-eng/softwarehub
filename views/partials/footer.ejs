@@ -10,28 +10,28 @@
   </button>
 
   <!-- Footer Navigation -->
-  <footer class="bg-white border-t border-slate-200 py-8 mt-12 shrink-0">
+  <footer class="bg-white border-t border-slate-200 dark:bg-slate-900 dark:border-slate-800 py-8 mt-12 shrink-0">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         
         <div class="flex items-center space-x-2">
           <img src="/images/logo.png" alt="Logo" class="w-8 h-8 object-contain">
-          <span class="font-bold text-slate-800 text-sm">
+          <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">
             <%= typeof config !== 'undefined' && config.site ? config.site.name : 'Software Hub' %>
           </span>
         </div>
 
-        <p class="text-xs text-slate-400">
+        <p class="text-xs text-slate-400 dark:text-slate-500">
           &copy; <%= new Date().getFullYear() %> <%= typeof config !== 'undefined' && config.site ? config.site.name : 'Software Hub' %>. All rights reserved. Free Windows software repository.
         </p>
 
-        <div class="flex items-center space-x-4 text-xs text-slate-400">
-          <a href="/about" class="hover:text-slate-600 transition-colors">About</a>
-          <a href="/feed.xml" class="hover:text-slate-600 transition-colors flex items-center gap-1">
+        <div class="flex items-center space-x-4 text-xs text-slate-400 dark:text-slate-500">
+          <a href="/about" class="hover:text-slate-600 dark:hover:text-slate-300 transition-colors">About</a>
+          <a href="/feed.xml" class="hover:text-slate-600 dark:hover:text-slate-300 transition-colors flex items-center gap-1">
             <i data-lucide="rss" class="w-3 h-3"></i>
             <span>RSS</span>
           </a>
-          <a href="/admin/login" class="hover:text-slate-600 transition-colors">Admin Login</a>
+          <a href="/admin/login" class="hover:text-slate-600 dark:hover:text-slate-300 transition-colors">Admin Login</a>
         </div>
 
       </div>

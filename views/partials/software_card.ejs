@@ -17,15 +17,15 @@
   }
   const badge = getDownloadBadge(item.download_count);
 %>
-<div class="software-card bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col justify-between h-full hover:shadow-lg transition-all duration-200">
+<div class="software-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden flex flex-col justify-between h-full hover:shadow-lg transition-all duration-200">
   <div class="p-5 flex flex-col items-start gap-4">
     <!-- Badges Row -->
     <div class="flex flex-wrap gap-1.5">
-      <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 tracking-wide uppercase">
+      <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300 tracking-wide uppercase">
         <%= item.category_name %>
       </span>
       <% if (badge) { %>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50">
           <i data-lucide="flame" class="w-3 h-3"></i>
           <span><%= badge %> Downloads</span>
         </span>
@@ -34,13 +34,13 @@
 
     <div class="flex items-center gap-4 w-full">
       <!-- Thumbnail Icon -->
-      <div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-slate-100 flex items-center justify-center bg-slate-50">
+      <div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 flex items-center justify-center bg-slate-50 dark:bg-slate-850">
         <% if (item.icon_image) { %>
           <!-- Use the uploaded image file -->
           <img src="/storage/images/<%= item.icon_image %>" alt="<%= item.name %> icon" class="w-full h-full object-cover" loading="lazy">
         <% } else { %>
           <!-- Fallback icon -->
-          <div class="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400">
+          <div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500">
             <i data-lucide="package" class="w-8 h-8"></i>
           </div>
         <% } %>
@@ -48,14 +48,14 @@
       
       <!-- Title & Size -->
       <div class="min-w-0">
-        <h3 class="font-bold text-slate-900 text-base truncate hover:text-brand-600 transition-colors">
+        <h3 class="font-bold text-slate-900 dark:text-white text-base truncate hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
           <a href="/software/<%= item.id %>/<%= swSlug %>"><%= item.name %></a>
         </h3>
-        <div class="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
+        <div class="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 mt-0.5">
           <i data-lucide="database" class="w-3 h-3"></i>
           <span><%= item.size %></span>
           <% if (item.version) { %>
-            <span class="px-1 text-slate-300">&bull;</span>
+            <span class="px-1 text-slate-300 dark:text-slate-700">&bull;</span>
             <span>v<%= item.version %></span>
           <% } %>
         </div>
@@ -63,14 +63,14 @@
     </div>
 
     <!-- Short Description -->
-    <p class="text-slate-500 text-xs leading-relaxed line-clamp-3">
+    <p class="text-slate-500 dark:text-slate-400 text-xs leading-relaxed line-clamp-3">
       <%= item.short_description %>
     </p>
   </div>
 
   <!-- Card Action Footer -->
-  <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-    <div class="flex items-center gap-3 text-[11px] font-semibold text-slate-400">
+  <div class="px-5 py-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+    <div class="flex items-center gap-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500">
       <span class="flex items-center gap-1">
         <i data-lucide="eye" class="w-3.5 h-3.5"></i>
         <span><%= item.view_count %></span>
@@ -83,7 +83,7 @@
     
     <a 
       href="/software/<%= item.id %>/<%= swSlug %>" 
-      class="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 focus:outline-none"
+      class="text-xs font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 flex items-center gap-1 focus:outline-none"
     >
       <span>Details</span>
       <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>

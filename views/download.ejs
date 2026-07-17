@@ -6,52 +6,52 @@
   <nav class="flex" aria-label="Breadcrumb">
     <ol class="inline-flex items-center space-x-1 md:space-x-3 text-xs font-semibold text-slate-500">
       <li class="inline-flex items-center">
-        <a href="/" class="hover:text-brand-600 flex items-center gap-1.5 transition-colors">
+        <a href="/" class="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1.5 transition-colors">
           <i data-lucide="home" class="w-3.5 h-3.5"></i>
           <span>Home</span>
         </a>
       </li>
       <li>
         <div class="flex items-center">
-          <i data-lucide="chevron-right" class="w-3 h-3 text-slate-300"></i>
-          <a href="/software/<%= software.id %>/<%= software.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') %>" class="ml-1 md:ml-2 hover:text-brand-600 transition-colors"><%= software.name %></a>
+          <i data-lucide="chevron-right" class="w-3 h-3 text-slate-300 dark:text-slate-700"></i>
+          <a href="/software/<%= software.id %>/<%= software.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') %>" class="ml-1 md:ml-2 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"><%= software.name %></a>
         </div>
       </li>
       <li aria-current="page">
         <div class="flex items-center">
-          <i data-lucide="chevron-right" class="w-3 h-3 text-slate-300"></i>
-          <span class="ml-1 md:ml-2 text-slate-700 font-bold">Download</span>
+          <i data-lucide="chevron-right" class="w-3 h-3 text-slate-300 dark:text-slate-700"></i>
+          <span class="ml-1 md:ml-2 text-slate-700 dark:text-slate-200 font-bold">Download</span>
         </div>
       </li>
     </ol>
   </nav>
 
   <!-- Main Download Waiting box -->
-  <div class="bg-white border border-slate-200 rounded-2xl p-8 sm:p-12 text-center shadow-sm max-w-2xl mx-auto">
+  <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 sm:p-12 text-center shadow-sm max-w-2xl mx-auto">
     
     <!-- Software Mini Identity -->
     <div class="flex items-center justify-center gap-3 mb-6">
-      <div class="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
+      <div class="w-10 h-10 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
         <% if (software.icon_image) { %>
           <img src="/storage/images/<%= software.icon_image %>" alt="<%= software.name %>" class="w-full h-full object-cover" loading="lazy">
         <% } else { %>
-          <i data-lucide="package" class="w-6 h-6 text-slate-400"></i>
+          <i data-lucide="package" class="w-6 h-6 text-slate-400 dark:text-slate-550"></i>
         <% } %>
       </div>
       <div class="text-left">
-        <h2 class="font-bold text-slate-800 text-base"><%= software.name %></h2>
-        <p class="text-slate-400 text-xs mt-0.5">Size: <%= software.size %> • Version: <%= software.version || 'Latest' %></p>
+        <h2 class="font-bold text-slate-800 dark:text-white text-base"><%= software.name %></h2>
+        <p class="text-slate-400 dark:text-slate-500 text-xs mt-0.5">Size: <%= software.size %> • Version: <%= software.version || 'Latest' %></p>
       </div>
     </div>
 
     <!-- Interstitial Wait Indicator -->
     <div id="loading-spinner" class="py-8 space-y-4">
-      <div class="w-12 h-12 border-4 border-slate-100 border-t-brand-600 rounded-full animate-spin-custom mx-auto"></div>
-      <p id="loader-status" class="text-slate-700 text-sm font-semibold">
+      <div class="w-12 h-12 border-4 border-slate-100 dark:border-slate-800 border-t-brand-600 rounded-full animate-spin-custom mx-auto"></div>
+      <p id="loader-status" class="text-slate-700 dark:text-slate-300 text-sm font-semibold">
         Generating secure download link...
       </p>
-      <p class="text-slate-400 text-xs">
-        Please wait <span id="countdown" data-duration="<%= config.download.loaderDurationSeconds %>" class="font-bold text-slate-800 text-sm"><%= config.download.loaderDurationSeconds %></span> seconds.
+      <p class="text-slate-400 dark:text-slate-500 text-xs">
+        Please wait <span id="countdown" data-duration="<%= config.download.loaderDurationSeconds %>" class="font-bold text-slate-800 dark:text-slate-200 text-sm"><%= config.download.loaderDurationSeconds %></span> seconds.
       </p>
     </div>
 
@@ -71,21 +71,21 @@
         <span>Click here to download</span>
       </button>
       
-      <p class="text-xs text-slate-400 leading-relaxed">
+      <p class="text-xs text-slate-400 dark:text-slate-555 leading-relaxed">
         If the download does not start automatically, click the button above.<br>
-        <a href="/software/<%= software.id %>/<%= software.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') %>" class="text-brand-600 hover:underline">Or, go back to details page</a>
+        <a href="/software/<%= software.id %>/<%= software.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') %>" class="text-brand-600 dark:text-brand-400 hover:underline">Or, go back to details page</a>
       </p>
     </div>
 
     <!-- Security Check Stamp -->
-    <div class="mt-8 border-t border-slate-100 pt-6 flex items-center justify-center gap-6 text-slate-400 text-xs">
+    <div class="mt-8 border-t border-slate-100 dark:border-slate-800 pt-6 flex items-center justify-center gap-6 text-slate-400 dark:text-slate-500 text-xs">
       <span class="flex items-center gap-1.5">
-        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500 dark:text-emerald-450"></i>
         <span>Secure Connection</span>
       </span>
-      <span class="h-3 w-[1px] bg-slate-200"></span>
+      <span class="h-3 w-[1px] bg-slate-200 dark:bg-slate-800"></span>
       <span class="flex items-center gap-1.5">
-        <i data-lucide="badge-check" class="w-4 h-4 text-emerald-500"></i>
+        <i data-lucide="badge-check" class="w-4 h-4 text-emerald-500 dark:text-emerald-450"></i>
         <span>Virus Checked</span>
       </span>
     </div>
@@ -97,12 +97,12 @@
 
   <!-- Related Recommendations Suggestions list -->
   <% if (typeof suggestions !== 'undefined' && suggestions.length > 0) { %>
-    <div class="border-t border-slate-200 pt-10">
+    <div class="border-t border-slate-200 dark:border-slate-800 pt-10">
       <div class="flex items-center gap-2 mb-6">
         <div class="bg-slate-700 text-white p-1 rounded-md">
           <i data-lucide="sparkles" class="w-4 h-4"></i>
         </div>
-        <h3 class="text-lg font-bold text-slate-900">Recommended Downloads</h3>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Recommended Downloads</h3>
       </div>
       
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

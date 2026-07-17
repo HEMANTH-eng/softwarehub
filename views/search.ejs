@@ -6,15 +6,15 @@
   <nav class="flex" aria-label="Breadcrumb">
     <ol class="inline-flex items-center space-x-1 md:space-x-3 text-xs font-semibold text-slate-500">
       <li class="inline-flex items-center">
-        <a href="/" class="hover:text-brand-600 flex items-center gap-1.5 transition-colors">
+        <a href="/" class="hover:text-brand-600 dark:hover:text-brand-400 flex items-center gap-1.5 transition-colors">
           <i data-lucide="home" class="w-3.5 h-3.5"></i>
           <span>Home</span>
         </a>
       </li>
       <li>
         <div class="flex items-center">
-          <i data-lucide="chevron-right" class="w-3 h-3 text-slate-300"></i>
-          <span class="ml-1 md:ml-2 text-slate-700 font-bold">
+          <i data-lucide="chevron-right" class="w-3 h-3 text-slate-300 dark:text-slate-700"></i>
+          <span class="ml-1 md:ml-2 text-slate-700 dark:text-slate-200 font-bold">
             <% if (searchQuery) { %>
               Search: "<%= searchQuery %>"
             <% } else if (activeCategory) { %>
@@ -29,19 +29,19 @@
   </nav>
   
   <!-- Header Title bar -->
-  <div class="border-b border-slate-200 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="border-b border-slate-200 dark:border-slate-800 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
-      <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
+      <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
         <% if (searchQuery) { %>
-          Search Results for "<span class="text-brand-600"><%= searchQuery %></span>"
+          Search Results for "<span class="text-brand-600 dark:text-brand-400"><%= searchQuery %></span>"
         <% } else if (activeCategory) { %>
-          Explore Category: <span class="text-brand-600"><%= activeCategory.name %></span>
+          Explore Category: <span class="text-brand-600 dark:text-brand-400"><%= activeCategory.name %></span>
         <% } else { %>
           Explore Software Repository
         <% } %>
       </h1>
       
-      <p class="text-xs text-slate-400 mt-1">
+      <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">
         <% if (totalCount > 0) { %>
           Found <%= totalCount %> verified software program(s). Showing page <%= currentPage %> of <%= totalPages %>.
         <% } else { %>
@@ -53,10 +53,10 @@
     <div class="flex items-center gap-3 flex-wrap">
       <!-- Active Category Filter -->
       <% if (activeCategory) { %>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 text-brand-700">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300">
           <i data-lucide="tag" class="w-3.5 h-3.5"></i>
           <span><%= activeCategory.name %></span>
-          <a href="/search<%= searchQuery ? '?q=' + searchQuery : '' %>" class="text-brand-400 hover:text-brand-700 ml-1">
+          <a href="/search<%= searchQuery ? '?q=' + searchQuery : '' %>" class="text-brand-400 dark:text-brand-600 hover:text-brand-700 dark:hover:text-brand-400 ml-1">
             <i data-lucide="x" class="w-3 h-3"></i>
           </a>
         </span>
@@ -67,14 +67,14 @@
         <select 
           id="sort-select"
           onchange="applySortFilter(this.value)"
-          class="appearance-none bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 pl-3 pr-8 py-2 focus:outline-none focus:border-brand-500 cursor-pointer"
+          class="appearance-none bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 pl-3 pr-8 py-2 focus:outline-none focus:border-brand-500 cursor-pointer"
         >
           <option value="name" <%= sortBy === 'name' ? 'selected' : '' %>>Sort: A-Z</option>
           <option value="newest" <%= sortBy === 'newest' ? 'selected' : '' %>>Sort: Newest</option>
           <option value="downloads" <%= sortBy === 'downloads' ? 'selected' : '' %>>Sort: Most Downloaded</option>
           <option value="views" <%= sortBy === 'views' ? 'selected' : '' %>>Sort: Most Viewed</option>
         </select>
-        <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none text-slate-400">
+        <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none text-slate-400 dark:text-slate-600">
           <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i>
         </div>
       </div>
@@ -96,10 +96,10 @@
 
     <!-- Pagination controls -->
     <% if (totalPages > 1) { %>
-      <div class="flex items-center justify-center space-x-2 mt-10 border-t border-slate-100 pt-6">
+      <div class="flex items-center justify-center space-x-2 mt-10 border-t border-slate-100 dark:border-slate-800 pt-6">
         <% if (currentPage > 1) { %>
           <a href="/search?<%= searchQuery ? 'q=' + searchQuery + '&' : '' %><%= activeCategory ? 'category=' + activeCategory.slug + '&' : '' %>sort=<%= sortBy %>&page=<%= currentPage - 1 %>"
-            class="px-4 py-2 border border-slate-200 text-sm font-semibold rounded-lg bg-white hover:bg-slate-50 transition-colors text-slate-600 flex items-center gap-1">
+            class="px-4 py-2 border border-slate-200 dark:border-slate-800 text-sm font-semibold rounded-lg bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300 flex items-center gap-1">
             <i data-lucide="chevron-left" class="w-4 h-4"></i>
             <span>Prev</span>
           </a>
@@ -107,14 +107,14 @@
 
         <% for(let i = 1; i <= totalPages; i++) { %>
           <a href="/search?<%= searchQuery ? 'q=' + searchQuery + '&' : '' %><%= activeCategory ? 'category=' + activeCategory.slug + '&' : '' %>sort=<%= sortBy %>&page=<%= i %>"
-            class="px-3.5 py-2 border text-sm font-semibold rounded-lg transition-colors <%= currentPage === i ? 'bg-brand-600 border-brand-600 text-white' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' %>">
+            class="px-3.5 py-2 border text-sm font-semibold rounded-lg transition-colors <%= currentPage === i ? 'bg-brand-600 border-brand-600 text-white' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' %>">
             <%= i %>
           </a>
         <% } %>
 
         <% if (currentPage < totalPages) { %>
           <a href="/search?<%= searchQuery ? 'q=' + searchQuery + '&' : '' %><%= activeCategory ? 'category=' + activeCategory.slug + '&' : '' %>sort=<%= sortBy %>&page=<%= currentPage + 1 %>"
-            class="px-4 py-2 border border-slate-200 text-sm font-semibold rounded-lg bg-white hover:bg-slate-50 transition-colors text-slate-600 flex items-center gap-1">
+            class="px-4 py-2 border border-slate-200 dark:border-slate-800 text-sm font-semibold rounded-lg bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300 flex items-center gap-1">
             <span>Next</span>
             <i data-lucide="chevron-right" class="w-4 h-4"></i>
           </a>
@@ -123,12 +123,12 @@
     <% } %>
   <% } else { %>
     <!-- Empty Search State -->
-    <div class="bg-white border border-slate-200 rounded-2xl p-12 text-center max-w-lg mx-auto shadow-sm my-8">
-      <div class="w-12 h-12 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center max-w-lg mx-auto shadow-sm my-8">
+      <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-550 rounded-full flex items-center justify-center mx-auto mb-4">
         <i data-lucide="search" class="w-6 h-6"></i>
       </div>
-      <h3 class="font-bold text-slate-800 text-base">No matches found</h3>
-      <p class="text-slate-400 text-xs mt-1.5 leading-relaxed">
+      <h3 class="font-bold text-slate-800 dark:text-slate-200 text-base">No matches found</h3>
+      <p class="text-slate-400 dark:text-slate-500 text-xs mt-1.5 leading-relaxed">
         We couldn't find any software matching "<%= searchQuery %>". Check your spelling, try adjusting your filters, or browse all categories above.
       </p>
       
@@ -141,7 +141,7 @@
         </a>
         <a 
           href="/search" 
-          class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
+          class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-350 text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
         >
           View All Software
         </a>
@@ -155,7 +155,7 @@
           <div class="bg-amber-500 text-white p-1 rounded-md">
             <i data-lucide="trending-up" class="w-4 h-4"></i>
           </div>
-          <h3 class="text-lg font-bold text-slate-900">Popular Software You Might Like</h3>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Popular Software You Might Like</h3>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <% popularFallback.forEach(function(item) { %>

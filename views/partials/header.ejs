@@ -34,6 +34,15 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/images/logo.png">
 
+  <script>
+    // Inline script to prevent screen flash of light theme
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+  </script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
@@ -42,6 +51,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -61,17 +71,17 @@
     }
   </script>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans min-h-screen flex flex-col">
 
   <!-- Header Navigation -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+  <header class="bg-white border-b border-slate-200 dark:bg-slate-900 dark:border-slate-800 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 gap-4">
         
         <!-- Logo -->
         <a href="/" class="flex items-center space-x-2 shrink-0">
           <img src="/images/logo.png" alt="Logo" class="w-10 h-10 object-contain">
-          <span class="text-xl font-bold tracking-tight text-slate-900">
+          <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             <%= typeof config !== 'undefined' && config.site ? config.site.name : 'Software Hub' %>
           </span>
         </a>
@@ -87,40 +97,49 @@
               name="q" 
               placeholder="Search software..." 
               value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
-              class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white text-sm focus:border-brand-500 focus:outline-none transition-colors"
+              class="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 dark:text-white focus:bg-white dark:focus:bg-slate-900 text-sm focus:border-brand-500 focus:outline-none transition-colors"
             >
           </form>
         </div>
 
-        <!-- Admin / Desktop Actions -->
-        <nav class="hidden md:flex items-center space-x-4">
-          <a href="/" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Home</a>
-          <a href="/search" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Explore All</a>
-          <a href="/request" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">Request for Apps</a>
-          <a href="/about" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors">About</a>
-          <% if (typeof adminLoggedIn !== 'undefined' && adminLoggedIn) { %>
-            <div class="h-4 w-[1px] bg-slate-200"></div>
-            <span class="text-xs text-slate-400">Hello, <%= adminUsername %></span>
-            <a href="/admin/dashboard" class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg transition-colors flex items-center space-x-1">
-              <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
-              <span>Dashboard</span>
-            </a>
-            <a href="/admin/logout" class="text-xs font-semibold text-red-600 hover:text-red-700">Logout</a>
-          <% } %>
-        </nav>
+        <!-- Desktop Navigation, Theme Toggle, & Mobile Toggle -->
+        <div class="flex items-center space-x-2 md:space-x-4">
+          <!-- Admin / Desktop Actions -->
+          <nav class="hidden md:flex items-center space-x-4">
+            <a href="/" class="text-sm font-medium text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 transition-colors">Home</a>
+            <a href="/search" class="text-sm font-medium text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 transition-colors">Explore All</a>
+            <a href="/request" class="text-sm font-medium text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 transition-colors">Request for Apps</a>
+            <a href="/about" class="text-sm font-medium text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 transition-colors">About</a>
+            <% if (typeof adminLoggedIn !== 'undefined' && adminLoggedIn) { %>
+              <div class="h-4 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
+              <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">Hello, <%= adminUsername %></span>
+              <a href="/admin/dashboard" class="text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-lg transition-colors flex items-center space-x-1">
+                <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+                <span>Dashboard</span>
+              </a>
+              <a href="/admin/logout" class="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">Logout</a>
+            <% } %>
+          </nav>
 
-        <!-- Mobile hamburger menu button -->
-        <div class="flex items-center sm:hidden">
-          <button id="mobile-menu-btn" class="text-slate-500 hover:text-slate-700 focus:outline-none p-1.5">
-            <i data-lucide="menu" class="w-6 h-6"></i>
+          <!-- Theme Toggle Button -->
+          <button id="theme-toggle" class="text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none rounded-lg text-sm p-2 transition-colors" aria-label="Toggle dark mode">
+            <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-5 h-5 hidden"></i>
+            <i id="theme-toggle-light-icon" data-lucide="sun" class="w-5 h-5 hidden"></i>
           </button>
+
+          <!-- Mobile hamburger menu button -->
+          <div class="flex items-center md:hidden">
+            <button id="mobile-menu-btn" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 focus:outline-none p-1.5">
+              <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+          </div>
         </div>
 
       </div>
     </div>
 
     <!-- Mobile Menu dropdown -->
-    <div id="mobile-menu" class="hidden sm:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-3">
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 space-y-3">
       <!-- Mobile Search Form -->
       <form action="/search" method="GET" class="relative">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -131,17 +150,17 @@
           name="q" 
           placeholder="Search software..." 
           value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
-          class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white text-sm focus:border-brand-500 focus:outline-none transition-colors"
+          class="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 dark:text-white focus:bg-white dark:focus:bg-slate-900 text-sm focus:border-brand-500 focus:outline-none transition-colors"
         >
       </form>
       <div class="flex flex-col space-y-2 pt-2">
-        <a href="/" class="text-sm font-medium text-slate-600 hover:text-brand-600 py-1 block">Home</a>
-        <a href="/search" class="text-sm font-medium text-slate-600 hover:text-brand-600 py-1 block">Explore All</a>
-        <a href="/request" class="text-sm font-medium text-slate-600 hover:text-brand-600 py-1 block">Request for Apps</a>
-        <a href="/about" class="text-sm font-medium text-slate-600 hover:text-brand-600 py-1 block">About</a>
+        <a href="/" class="text-sm font-medium text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 py-1 block">Home</a>
+        <a href="/search" class="text-sm font-medium text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 py-1 block">Explore All</a>
+        <a href="/request" class="text-sm font-medium text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 py-1 block">Request for Apps</a>
+        <a href="/about" class="text-sm font-medium text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 py-1 block">About</a>
         <% if (typeof adminLoggedIn !== 'undefined' && adminLoggedIn) { %>
-          <hr class="border-slate-100 my-1">
-          <div class="text-xs text-slate-400 py-1">Logged in as: <%= adminUsername %></div>
+          <hr class="border-slate-100 dark:border-slate-800 my-1">
+          <div class="text-xs text-slate-400 dark:text-slate-500 py-1">Logged in as: <%= adminUsername %></div>
           <a href="/admin/dashboard" class="text-sm font-medium text-brand-600 py-1 block">Admin Dashboard</a>
           <a href="/admin/logout" class="text-sm font-medium text-red-600 py-1 block">Logout</a>
         <% } %>
@@ -151,19 +170,19 @@
 
   <!-- Category Pills Sub-navigation -->
   <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
-    <div class="bg-white border-b border-slate-200 shadow-sm py-3 overflow-x-auto whitespace-nowrap">
+    <div class="bg-white border-b border-slate-200 dark:bg-slate-900 dark:border-slate-800 shadow-sm py-3 overflow-x-auto whitespace-nowrap">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-2 text-sm">
-        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider pr-2">Categories:</span>
+        <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider pr-2">Categories:</span>
         <a 
           href="/search" 
-          class="px-3 py-1 rounded-full text-xs font-medium transition-colors <%= typeof activeCategory === 'undefined' || !activeCategory ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' %>"
+          class="px-3 py-1 rounded-full text-xs font-medium transition-colors <%= typeof activeCategory === 'undefined' || !activeCategory ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700' %>"
         >
           All Software
         </a>
         <% categories.forEach(function(cat) { %>
           <a 
             href="/search?category=<%= cat.slug %>" 
-            class="px-3 py-1 rounded-full text-xs font-medium transition-colors <%= (typeof activeCategory !== 'undefined' && activeCategory && activeCategory.id === cat.id) ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' %>"
+            class="px-3 py-1 rounded-full text-xs font-medium transition-colors <%= (typeof activeCategory !== 'undefined' && activeCategory && activeCategory.id === cat.id) ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700' %>"
           >
             <%= cat.name %>
           </a>
