@@ -100,6 +100,15 @@ router.post('/login', async (req, res) => {
   
   try {
     const user = await db.get('SELECT * FROM admin_users WHERE username = ?', [username]);
+    
+    console.log("===== LOGIN DEBUG =====");
+    console.log("Username entered:", username);
+    console.log("User found:", user);
+    
+    if (user) {
+        const match = await bcrypt.compare(password, user.password_hash);
+        console.log("Password match:", match);
+    }
     console.log("LOGIN ATTEMPT:", username);
     console.log("DATABASE USER:", user);
     
