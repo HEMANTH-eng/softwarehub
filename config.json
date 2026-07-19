@@ -44,7 +44,7 @@
     },
     "banner": {
       "enabled": true,
-      "zoneId": "",
+      "zoneId": "73ac03c194e5a5857092778b554bc819",
       "pages": [
         "softwareDetail"
       ]
