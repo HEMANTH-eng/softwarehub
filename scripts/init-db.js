@@ -160,8 +160,93 @@ async function runSeed() {
     }
   ];
 
-  for (const sw of softwareList) {
-    const existing = await db.get('SELECT * FROM software WHERE name = ?', [sw.name]);
+  // Define sample Android software list
+  const androidList = [
+    {
+      name: 'WhatsApp Messenger',
+      category: 'Utilities',
+      short_description: 'Simple, reliable, and private messaging and calling on Android.',
+      full_description: 'WhatsApp from Meta is a free messaging and video calling app. It is used by over 2B people in more than 180 countries. It is simple, reliable, and private, so you can easily keep in touch with your friends and family.',
+      version: '2.24.9.78',
+      size: '38 MB',
+      icon_image: 'whatsapp-icon.svg',
+      file_path: 'whatsapp.apk',
+      is_featured: 1,
+      is_new: 1,
+      platform: 'android',
+      bgColor: '#25D366',
+      text: 'WA'
+    },
+    {
+      name: 'Telegram',
+      category: 'Utilities',
+      short_description: 'Pure instant messaging — simple, fast, secure, and synced across all devices.',
+      full_description: 'Telegram is a messaging app with a focus on speed and security, it’s super-fast, simple and free. You can send media and files, without any limits on their type and size. Your entire chat history will require no disk space on your device.',
+      version: '10.11.1',
+      size: '48 MB',
+      icon_image: 'telegram-icon.svg',
+      file_path: 'telegram.apk',
+      is_featured: 1,
+      is_new: 0,
+      platform: 'android',
+      bgColor: '#24A1DE',
+      text: 'TG'
+    },
+    {
+      name: 'Spotify Music',
+      category: 'Multimedia',
+      short_description: 'Listen to songs, play podcasts, and albums you love for free on your Android.',
+      full_description: 'With the Spotify music and podcast app, you can play millions of songs, albums and original podcasts for free. We have even added audiobooks, so you can enjoy thousands of stories wherever you are!',
+      version: '8.9.34',
+      size: '62 MB',
+      icon_image: 'spotify-icon.svg',
+      file_path: 'spotify.apk',
+      is_featured: 1,
+      is_new: 0,
+      platform: 'android',
+      bgColor: '#1DB954',
+      text: 'SP'
+    },
+    {
+      name: 'Firefox for Android',
+      category: 'Browsers',
+      short_description: 'Private, safe, and fast web browser with tracking protection.',
+      full_description: 'Get the fast, free and private web browser. Firefox is built with independent privacy protections and customizable options to make your Android browsing experience secure.',
+      version: '125.1.0',
+      size: '75 MB',
+      icon_image: 'firefox-icon.svg',
+      file_path: 'firefox.apk',
+      is_featured: 0,
+      is_new: 1,
+      platform: 'android',
+      bgColor: '#FF9500',
+      text: 'FF'
+    },
+    {
+      name: 'Google Drive',
+      category: 'Office',
+      short_description: 'Store, access, and share your files securely in one place.',
+      full_description: 'Google Drive, part of Google Workspace, is a safe place to back up and access all your files from any device. Easily invite others to view, edit, or leave comments on any of your files or folders.',
+      version: '2.24.182',
+      size: '28 MB',
+      icon_image: 'drive-icon.svg',
+      file_path: 'drive.apk',
+      is_featured: 0,
+      is_new: 0,
+      platform: 'android',
+      bgColor: '#34A853',
+      text: 'GD'
+    }
+  ];
+
+  // Combined lists for seeding
+  const combinedList = [
+    ...softwareList.map(item => ({ ...item, platform: 'windows' })),
+    ...androidList
+  ];
+
+  for (const sw of combinedList) {
+    const existing = await db.get('SELECT * FROM software WHERE name = ? AND platform = ?', [sw.name, sw.platform]);
     if (!existing) {
       // Create mock icon SVG
       createMockIcon(sw.icon_image, sw.bgColor, sw.text);
@@ -171,8 +256,8 @@ async function runSeed() {
       const categoryId = catMap[sw.category];
       await db.run(
         `INSERT INTO software 
-         (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new, platform) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           sw.name,
           categoryId,
@@ -183,10 +268,11 @@ async function runSeed() {
           sw.icon_image,
           sw.file_path,
           sw.is_featured,
-          sw.is_new
+          sw.is_new,
+          sw.platform
         ]
       );
-      console.log(`Created software listing: ${sw.name}`);
+      console.log(`Created software listing: ${sw.name} (${sw.platform})`);
     }
   }
 
