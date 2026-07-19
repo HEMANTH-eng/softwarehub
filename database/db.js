@@ -45,6 +45,58 @@ function initializeSchema() {
       console.error('Error initializing database schema', err);
     } else {
       console.log('Database schema checked/initialized successfully.');
+      seedDefaultAdminAndCategories();
+    }
+  });
+}
+
+function seedDefaultAdminAndCategories() {
+  db.get('SELECT COUNT(*) as count FROM admin_users', (err, row) => {
+    if (err) {
+      console.error('Error checking admin_users table:', err);
+      return;
+    }
+    if (row && row.count === 0) {
+      const bcrypt = require('bcryptjs');
+      const adminUsername = 'hemanth';
+      const adminPassword = 'bhemanth';
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(adminPassword, salt);
+      db.run('INSERT INTO admin_users (username, password_hash) VALUES (?, ?)', [adminUsername, hash], (insertErr) => {
+        if (insertErr) {
+          console.error('Failed to seed default admin user:', insertErr);
+        } else {
+          console.log(`Auto-seeded default admin user: "${adminUsername}"`);
+        }
+      });
+    }
+  });
+
+  db.get('SELECT COUNT(*) as count FROM categories', (err, row) => {
+    if (err) {
+      console.error('Error checking categories table:', err);
+      return;
+    }
+    if (row && row.count === 0) {
+      const categories = [
+        { name: 'Utilities', slug: 'utilities' },
+        { name: 'Browsers', slug: 'browsers' },
+        { name: 'Security', slug: 'security' },
+        { name: 'Office', slug: 'office' },
+        { name: 'Multimedia', slug: 'multimedia' },
+        { name: 'Development', slug: 'development' }
+      ];
+      const stmt = db.prepare('INSERT INTO categories (name, slug) VALUES (?, ?)');
+      categories.forEach(cat => {
+        stmt.run(cat.name, cat.slug);
+      });
+      stmt.finalize((finalizeErr) => {
+        if (finalizeErr) {
+          console.error('Failed to finalize categories statement:', finalizeErr);
+        } else {
+          console.log('Auto-seeded default categories.');
+        }
+      });
     }
   });
 }

@@ -80,6 +80,11 @@ function requireAuth(req, res, next) {
 
 // --- ADMIN LOGIN / LOGOUT ---
 
+// GET Admin Root (Redirect to Dashboard)
+router.get('/', (req, res) => {
+  res.redirect('/admin/dashboard');
+});
+
 // GET Login Page
 router.get('/login', (req, res) => {
   if (req.session && req.session.adminId) {
