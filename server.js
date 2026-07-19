@@ -77,6 +77,10 @@ app.use('/storage/images', express.static(path.join(__dirname, 'storage/images')
 
 // Global local variables for EJS templates (e.g. navigation helpers, default placeholders)
 app.use((req, res, next) => {
+  if (req.session && (req.query.platform === 'windows' || req.query.platform === 'android')) {
+    req.session.platform = req.query.platform;
+  }
+  res.locals.platform = req.session && req.session.platform ? req.session.platform : 'windows';
   res.locals.adminLoggedIn = !!(req.session && req.session.adminId);
   res.locals.adminUsername = req.session ? req.session.adminUsername : null;
   res.locals.currentUrl = req.originalUrl;

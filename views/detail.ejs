@@ -6,7 +6,7 @@
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "<%= software.name %>",
-  "operatingSystem": "Windows",
+  "operatingSystem": "<%= (software.platform === 'android') ? 'Android' : 'Windows' %>",
   "applicationCategory": "<%= software.category_name %>",
   "description": "<%= software.short_description ? software.short_description.replace(/"/g, '\\"') : '' %>",
   <% if (software.version) { %>"softwareVersion": "<%= software.version %>",<% } %>
@@ -140,7 +140,7 @@
           </div>
           <div class="flex items-center justify-between text-xs border-b border-slate-100 dark:border-slate-800 py-2">
             <span class="text-slate-400 dark:text-slate-550">Platform:</span>
-            <span class="font-semibold text-slate-700 dark:text-slate-350">Windows OS</span>
+            <span class="font-semibold text-slate-700 dark:text-slate-350"><%= software.platform === 'android' ? 'Android OS' : 'Windows OS' %></span>
           </div>
         </div>
 

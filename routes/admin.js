@@ -212,11 +212,14 @@ router.get('/dashboard', requireAuth, async (req, res) => {
 router.get('/software', requireAuth, async (req, res) => {
   try {
     const config = getConfig(req);
+    const platform = req.session && req.session.platform ? req.session.platform : 'windows';
     const softwareList = await db.all(
       `SELECT s.*, c.name as category_name 
        FROM software s 
        JOIN categories c ON s.category_id = c.id 
-       ORDER BY s.created_at DESC`
+       WHERE s.platform = ?
+       ORDER BY s.created_at DESC`,
+      [platform]
     );
     const categories = await db.all('SELECT * FROM categories ORDER BY name ASC');
     
@@ -243,7 +246,7 @@ router.post(
     { name: 'software_file', maxCount: 1 }
   ]),
   async (req, res) => {
-    const { name, category_id, short_description, full_description, version, size, is_featured, is_new } = req.body;
+    const { name, category_id, short_description, full_description, version, size, is_featured, is_new, platform } = req.body;
     
     try {
       const iconFile = req.files['icon_image'] ? req.files['icon_image'][0].filename : '';
@@ -255,8 +258,8 @@ router.post(
       
       await db.run(
         `INSERT INTO software 
-         (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new, platform) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           name,
           category_id,
@@ -267,7 +270,8 @@ router.post(
           iconFile,
           softwareFile,
           is_featured ? 1 : 0,
-          is_new ? 1 : 0
+          is_new ? 1 : 0,
+          platform || 'windows'
         ]
       );
       
@@ -289,7 +293,7 @@ router.post(
   ]),
   async (req, res) => {
     const softwareId = req.params.id;
-    const { name, category_id, short_description, full_description, version, size, is_featured, is_new } = req.body;
+    const { name, category_id, short_description, full_description, version, size, is_featured, is_new, platform } = req.body;
     
     try {
       const existing = await db.get('SELECT * FROM software WHERE id = ?', [softwareId]);
@@ -325,7 +329,7 @@ router.post(
       await db.run(
         `UPDATE software 
          SET name = ?, category_id = ?, short_description = ?, full_description = ?, 
-             version = ?, size = ?, icon_image = ?, file_path = ?, is_featured = ?, is_new = ?, updated_at = CURRENT_TIMESTAMP
+             version = ?, size = ?, icon_image = ?, file_path = ?, is_featured = ?, is_new = ?, platform = ?, updated_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
         [
           name,
@@ -338,6 +342,7 @@ router.post(
           softwareFile,
           is_featured ? 1 : 0,
           is_new ? 1 : 0,
+          platform || 'windows',
           softwareId
         ]
       );

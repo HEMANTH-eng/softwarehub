@@ -22,7 +22,7 @@
         </div>
 
         <p class="text-xs text-slate-400 dark:text-slate-500">
-          &copy; <%= new Date().getFullYear() %> <%= typeof config !== 'undefined' && config.site ? config.site.name : 'Software Hub' %>. All rights reserved. Free Windows software repository.
+          &copy; <%= new Date().getFullYear() %> <%= typeof config !== 'undefined' && config.site ? config.site.name : 'Software Hub' %>. All rights reserved. Free <%= (typeof platform !== 'undefined' && platform === 'android') ? 'Android' : 'Windows' %> software repository.
         </p>
 
         <div class="flex items-center space-x-4 text-xs text-slate-400 dark:text-slate-500">

@@ -24,17 +24,33 @@ const requestFormLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Platform Switcher Route
+router.get('/set-platform', (req, res) => {
+  const { platform, redirect } = req.query;
+  if (platform === 'windows' || platform === 'android') {
+    if (req.session) {
+      req.session.platform = platform;
+    }
+  }
+  let target = redirect || '/';
+  if (target.includes('/set-platform')) {
+    target = '/';
+  }
+  res.redirect(target);
+});
+
 // 1. Home Page
 router.get('/', async (req, res) => {
   try {
     const config = getConfig(req);
     const categories = await db.all('SELECT * FROM categories ORDER BY name ASC');
+    const platform = req.session && req.session.platform ? req.session.platform : 'windows';
     
     // Featured Software
-    const featured = await db.all('SELECT s.*, c.name as category_name, c.slug as category_slug FROM software s JOIN categories c ON s.category_id = c.id WHERE s.is_featured = 1 ORDER BY s.updated_at DESC LIMIT 6');
+    const featured = await db.all('SELECT s.*, c.name as category_name, c.slug as category_slug FROM software s JOIN categories c ON s.category_id = c.id WHERE s.is_featured = 1 AND s.platform = ? ORDER BY s.updated_at DESC LIMIT 6', [platform]);
     
     // New Software (either marked new or top 6 recent)
-    const newSoftware = await db.all('SELECT s.*, c.name as category_name, c.slug as category_slug FROM software s JOIN categories c ON s.category_id = c.id WHERE s.is_new = 1 OR s.created_at >= date(\'now\', \'-30 days\') ORDER BY s.created_at DESC LIMIT 6');
+    const newSoftware = await db.all('SELECT s.*, c.name as category_name, c.slug as category_slug FROM software s JOIN categories c ON s.category_id = c.id WHERE (s.is_new = 1 OR s.created_at >= date(\'now\', \'-30 days\')) AND s.platform = ? ORDER BY s.created_at DESC LIMIT 6', [platform]);
     
     // Trending / Popular software (top downloads in last 7 days)
     const trending = await db.all(
@@ -42,11 +58,12 @@ router.get('/', async (req, res) => {
        FROM download_logs l
        JOIN software s ON l.software_id = s.id
        JOIN categories c ON s.category_id = c.id
-       WHERE l.downloaded_at >= date('now', '-7 days')
+       WHERE l.downloaded_at >= date('now', '-7 days') AND s.platform = ?
        GROUP BY s.id
        ORDER BY recent_downloads DESC
-       LIMIT 6`
-    );
+       LIMIT 6`,
+       [platform]
+     );
 
     // All Software (with Pagination)
     const page = parseInt(req.query.page) || 1;
@@ -57,18 +74,19 @@ router.get('/', async (req, res) => {
       `SELECT s.*, c.name as category_name, c.slug as category_slug 
        FROM software s 
        JOIN categories c ON s.category_id = c.id 
+       WHERE s.platform = ?
        ORDER BY s.name ASC 
        LIMIT ? OFFSET ?`,
-      [limit, offset]
+      [platform, limit, offset]
     );
     
-    const totalCountRow = await db.get('SELECT COUNT(*) as count FROM software');
+    const totalCountRow = await db.get('SELECT COUNT(*) as count FROM software WHERE platform = ?', [platform]);
     const totalCount = totalCountRow ? totalCountRow.count : 0;
     const totalPages = Math.ceil(totalCount / limit);
     
     res.render('home', {
       siteTitle: config.site.name,
-      metaDescription: `${config.site.tagline} — Browse, search, and download verified Windows software instantly. No accounts required.`,
+      metaDescription: `${config.site.tagline} — Browse, search, and download verified ${platform === 'android' ? 'Android' : 'Windows'} software instantly. No accounts required.`,
       canonicalUrl: `${req.protocol}://${req.get('host')}/`,
       tagline: config.site.tagline,
       categories,
@@ -99,22 +117,23 @@ router.get('/search', async (req, res) => {
     const limit = config.site.itemsPerPage || 12;
     const offset = (page - 1) * limit;
     
+    const platform = req.session && req.session.platform ? req.session.platform : 'windows';
     const categories = await db.all('SELECT * FROM categories ORDER BY name ASC');
     
     let countSql = `
       SELECT COUNT(*) as count
       FROM software s 
       JOIN categories c ON s.category_id = c.id 
-      WHERE 1=1
+      WHERE s.platform = ?
     `;
     let sql = `
       SELECT s.*, c.name as category_name, c.slug as category_slug 
       FROM software s 
       JOIN categories c ON s.category_id = c.id 
-      WHERE 1=1
+      WHERE s.platform = ?
     `;
-    const params = [];
-    const countParams = [];
+    const params = [platform];
+    const countParams = [platform];
     let activeCategory = null;
     
     if (categorySlug) {
@@ -171,15 +190,17 @@ router.get('/search', async (req, res) => {
         `SELECT s.*, c.name as category_name, c.slug as category_slug 
          FROM software s 
          JOIN categories c ON s.category_id = c.id 
+         WHERE s.platform = ?
          ORDER BY s.download_count DESC 
-         LIMIT 6`
+         LIMIT 6`,
+         [platform]
       );
     }
 
     // Build meta description
-    let metaDesc = `Explore and download free Windows software.`;
-    if (query) metaDesc = `Search results for "${query}" — free Windows software downloads.`;
-    if (activeCategory) metaDesc = `Browse ${activeCategory.name} software — free verified downloads.`;
+    let metaDesc = `Explore and download free ${platform === 'android' ? 'Android' : 'Windows'} software.`;
+    if (query) metaDesc = `Search results for "${query}" — free ${platform === 'android' ? 'Android' : 'Windows'} software downloads.`;
+    if (activeCategory) metaDesc = `Browse ${activeCategory.name} ${platform === 'android' ? 'Android' : 'Windows'} software — free verified downloads.`;
     
     res.render('search', {
       siteTitle: query ? `Search: ${query} - ${config.site.name}` : `Explore Software - ${config.site.name}`,
@@ -221,24 +242,30 @@ router.get('/software/:id/:slug', async (req, res) => {
       return res.status(404).send('Software not found');
     }
     
+    // Switch active platform context to match the software platform
+    if (req.session) {
+      req.session.platform = software.platform || 'windows';
+    }
+    res.locals.platform = software.platform || 'windows';
+    
     // Increment View Count asynchronously
     await db.run('UPDATE software SET view_count = view_count + 1 WHERE id = ?', [softwareId]);
     
-    // Suggestions: other products in same category
+    // Suggestions: other products in same category and platform
     const suggestionsLimit = config.download.suggestionsCount || 4;
     const suggestions = await db.all(
       `SELECT s.*, c.name as category_name, c.slug as category_slug 
        FROM software s 
        JOIN categories c ON s.category_id = c.id 
-       WHERE s.category_id = ? AND s.id != ? 
+       WHERE s.category_id = ? AND s.id != ? AND s.platform = ?
        ORDER BY RANDOM() 
        LIMIT ?`,
-      [software.category_id, softwareId, suggestionsLimit]
+      [software.category_id, softwareId, software.platform || 'windows', suggestionsLimit]
     );
     
     res.render('detail', {
       siteTitle: `${software.name} Free Download - ${config.site.name}`,
-      metaDescription: software.short_description || `Download ${software.name} for Windows — free, verified, and virus-checked.`,
+      metaDescription: software.short_description || `Download ${software.name} for ${software.platform === 'android' ? 'Android' : 'Windows'} — free, verified, and virus-checked.`,
       canonicalUrl: `${req.protocol}://${req.get('host')}/software/${software.id}/${req.params.slug}`,
       ogImage: software.icon_image ? `${req.protocol}://${req.get('host')}/storage/images/${software.icon_image}` : null,
       software,
@@ -269,21 +296,27 @@ router.get('/download/:id', async (req, res) => {
       return res.status(404).send('Software not found');
     }
     
+    // Switch active platform context to match the software platform
+    if (req.session) {
+      req.session.platform = software.platform || 'windows';
+    }
+    res.locals.platform = software.platform || 'windows';
+    
     // Suggestions
     const suggestionsLimit = config.download.suggestionsCount || 4;
     const suggestions = await db.all(
       `SELECT s.*, c.name as category_name, c.slug as category_slug 
        FROM software s 
        JOIN categories c ON s.category_id = c.id 
-       WHERE s.category_id = ? AND s.id != ? 
+       WHERE s.category_id = ? AND s.id != ? AND s.platform = ?
        ORDER BY RANDOM() 
        LIMIT ?`,
-      [software.category_id, softwareId, suggestionsLimit]
+      [software.category_id, softwareId, software.platform || 'windows', suggestionsLimit]
     );
     
     res.render('download', {
       siteTitle: `Downloading ${software.name} - ${config.site.name}`,
-      metaDescription: `Download ${software.name} (${software.size}) — free, safe, and verified Windows software.`,
+      metaDescription: `Download ${software.name} (${software.size}) — free, safe, and verified ${software.platform === 'android' ? 'Android' : 'Windows'} software.`,
       canonicalUrl: `${req.protocol}://${req.get('host')}/download/${softwareId}`,
       software,
       suggestions,

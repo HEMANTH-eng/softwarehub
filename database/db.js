@@ -45,7 +45,15 @@ function initializeSchema() {
       console.error('Error initializing database schema', err);
     } else {
       console.log('Database schema checked/initialized successfully.');
-      seedDefaultAdminAndCategories();
+      // Automatically run migration to add platform column if it doesn't exist
+      db.run("ALTER TABLE software ADD COLUMN platform TEXT DEFAULT 'windows'", (migrateErr) => {
+        if (migrateErr && !migrateErr.message.includes('duplicate column name')) {
+          console.error('Error migrating software table for platform column:', migrateErr);
+        } else {
+          console.log('Database schema platform column verified/migrated.');
+        }
+        seedDefaultAdminAndCategories();
+      });
     }
   });
 }
