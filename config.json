@@ -18,7 +18,7 @@
     "enabled": true,
     "popunder": {
       "enabled": true,
-      "zoneId": "",
+      "zoneId": "ec9b1d832151d3cdb0699dc760a8f1c1",
       "page": "download",
       "frequencyCapPerSession": 1,
       "devices": [
@@ -27,7 +27,7 @@
     },
     "smartlink": {
       "enabled": true,
-      "zoneId": "",
+      "zoneId": "https://www.effectivecpmnetwork.com/z1swsdf34?key=c1182ffa1e5c0295cdf7b11e0c42a31a",
       "page": "download",
       "frequencyCapPerSession": 1,
       "devices": [
@@ -36,7 +36,7 @@
     },
     "nativeBanner": {
       "enabled": true,
-      "zoneId": "",
+      "zoneId": "1062c4dddf349682c7e17f655f90bfa0",
       "pages": [
         "home",
         "search"
@@ -51,7 +51,7 @@
     },
     "socialBar": {
       "enabled": true,
-      "zoneId": "",
+      "zoneId": "163cf877be4dadc164079de6be23c8dc",
       "page": "download",
       "dismissible": true
     }

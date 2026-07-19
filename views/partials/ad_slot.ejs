@@ -4,6 +4,22 @@
   const formatConfig = isGlobalEnabled && config.ads[format] ? config.ads[format] : null;
   const isFormatEnabled = formatConfig && formatConfig.enabled;
   const zoneId = formatConfig ? formatConfig.zoneId : '';
+
+  // Helper to extract script src or construct it dynamically
+  function getAdScriptSrc(val, template) {
+    if (!val) return '';
+    // If it's a full script tag, extract the src attribute
+    if (val.includes('src=')) {
+      const m = val.match(/src=["']([^"']+)["']/);
+      if (m) return m[1];
+    }
+    // If it's a URL
+    if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('//')) {
+      return val;
+    }
+    // If it's a zone ID, use the default template
+    return template.replace('{zoneId}', val);
+  }
 %>
 
 <% if (isFormatEnabled) { %>
@@ -12,26 +28,59 @@
     <div class="ad-container my-4 flex justify-center text-center">
       <% if (format === 'banner') { %>
         <div class="w-full max-w-[728px] overflow-hidden">
+          <% 
+             let cleanZone = zoneId;
+             if (zoneId.includes('src=')) {
+               const m = zoneId.match(/\/([a-f0-9]{32})/);
+               if (m) cleanZone = m[1];
+             } else if (zoneId.startsWith('http') || zoneId.startsWith('//')) {
+               const m = zoneId.match(/\/([a-f0-9]{32})/);
+               if (m) cleanZone = m[1];
+             }
+          %>
           <script type="text/javascript">
             atOptions = {
-              'key' : '<%= zoneId %>',
+              'key' : '<%= cleanZone %>',
               'format' : 'iframe',
               'height' : 90,
               'width' : 728,
               'params' : {}
             };
           </script>
-          <script type="text/javascript" src="//www.highperformanceformat.com/<%= zoneId %>/invoke.js"></script>
+          <script type="text/javascript" src="//www.highperformanceformat.com/<%= cleanZone %>/invoke.js"></script>
         </div>
       <% } else if (format === 'nativeBanner') { %>
         <div class="w-full overflow-hidden">
-          <script async="async" data-cfasync="false" src="//www.highperformanceformat.com/<%= zoneId %>/invoke.js"></script>
-          <div id="container-<%= zoneId %>"></div>
+          <%
+             const nativeSrc = getAdScriptSrc(zoneId, 'https://pl30433994.effectivecpmnetwork.com/{zoneId}/invoke.js');
+             let cleanZone = zoneId;
+             // Extract 32-character hex zone ID
+             const m = nativeSrc.match(/\/([a-f0-9]{32})/);
+             if (m) cleanZone = m[1];
+          %>
+          <script async="async" data-cfasync="false" src="<%= nativeSrc %>"></script>
+          <div id="container-<%= cleanZone %>"></div>
         </div>
       <% } else if (format === 'socialBar') { %>
         <div id="social-bar-slot" class="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t border-slate-200 shadow-2xl flex items-center justify-between max-w-lg mx-auto sm:rounded-t-xl">
           <div class="flex-1">
-            <script type='text/javascript' src='//pl20000000.highperformanceformat.com/a4/b3/c2/<%= zoneId %>/invoke.js'></script>
+            <%
+               let socialBarSrc = zoneId;
+               if (zoneId.includes('src=')) {
+                 const m = zoneId.match(/src=["']([^"']+)["']/);
+                 if (m) socialBarSrc = m[1];
+               } else if (!zoneId.startsWith('http') && !zoneId.startsWith('//')) {
+                 if (zoneId.length === 32) {
+                   const s1 = zoneId.substring(0, 2);
+                   const s2 = zoneId.substring(2, 4);
+                   const s3 = zoneId.substring(4, 6);
+                   socialBarSrc = `https://pl30433995.effectivecpmnetwork.com/${s1}/${s2}/${s3}/${zoneId}.js`;
+                 } else {
+                   socialBarSrc = `//pl20000000.highperformanceformat.com/a4/b3/c2/${zoneId}/invoke.js`;
+                 }
+               }
+            %>
+            <script type='text/javascript' src='<%= socialBarSrc %>'></script>
           </div>
           <button id="dismiss-social-bar" class="ml-4 p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 focus:outline-none">
             <i data-lucide="x" class="w-5 h-5"></i>

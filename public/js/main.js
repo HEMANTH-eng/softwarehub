@@ -75,7 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!sessionStorage.getItem(firedKey)) {
               sessionStorage.setItem(firedKey, 'true');
               // Open smartlink ad redirect in new window/tab
-              const adUrl = `https://www.highrevenuegate.com/${smartlinkZone}`;
+              let adUrl = smartlinkZone;
+              if (!adUrl.startsWith('http://') && !adUrl.startsWith('https://') && !adUrl.startsWith('//')) {
+                adUrl = `https://www.highrevenuegate.com/${smartlinkZone}`;
+              }
               window.open(adUrl, '_blank');
             }
           }
@@ -86,7 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!sessionStorage.getItem(firedKey)) {
               sessionStorage.setItem(firedKey, 'true');
               // Open popunder ad page
-              const adUrl = `https://www.highrevenuegate.com/${popunderZone}`;
+              let adUrl = popunderZone;
+              if (!adUrl.startsWith('http://') && !adUrl.startsWith('https://') && !adUrl.startsWith('//')) {
+                adUrl = `https://www.highrevenuegate.com/${popunderZone}`;
+              }
               window.open(adUrl, '_blank');
             }
           }

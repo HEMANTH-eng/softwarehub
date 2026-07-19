@@ -113,6 +113,26 @@
     </div>
   <% } %>
 
+  <% if (config.ads.enabled && config.ads.popunder.enabled && config.ads.popunder.zoneId) { %>
+    <%
+       let popunderSrc = config.ads.popunder.zoneId;
+       if (popunderSrc.includes('src=')) {
+         const m = popunderSrc.match(/src=["']([^"']+)["']/);
+         if (m) popunderSrc = m[1];
+       } else if (!popunderSrc.startsWith('http') && !popunderSrc.startsWith('//')) {
+         if (popunderSrc.length === 32) {
+           const p1 = popunderSrc.substring(0, 2);
+           const p2 = popunderSrc.substring(2, 4);
+           const p3 = popunderSrc.substring(4, 6);
+           popunderSrc = `https://pl30433993.effectivecpmnetwork.com/${p1}/${p2}/${p3}/${popunderSrc}.js`;
+         } else {
+           popunderSrc = `//www.highperformanceformat.com/${popunderSrc}/invoke.js`;
+         }
+       }
+    %>
+    <script type="text/javascript" src="<%= popunderSrc %>"></script>
+  <% } %>
+
 </div>
 
 <%- include('partials/footer') %>
