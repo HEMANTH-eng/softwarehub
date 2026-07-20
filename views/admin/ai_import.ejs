@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= siteTitle %></title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
+
+  <!-- Admin Top Banner Header -->
+  <%- include('partials/admin_header') %>
+
+  <!-- Admin Navigation Tabs -->
+  <div class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-8">
+        <a href="/admin/dashboard" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin/software" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="package" class="w-4 h-4"></i>
+          <span>Manage Software</span>
+        </a>
+        <a href="/admin/ai-import" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-blue-600 text-blue-600">
+          <i data-lucide="bot" class="w-4 h-4 text-blue-600"></i>
+          <span>🤖 AI Import</span>
+        </a>
+        <a href="/admin/categories" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="tag" class="w-4 h-4"></i>
+          <span>Categories</span>
+        </a>
+        <a href="/admin/requests" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>App Requests</span>
+        </a>
+        <a href="/admin/settings" class="py-4 px-1 border-b-2 font-bold text-sm flex items-center gap-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+          <span>Ad & Site Settings</span>
+        </a>
+        <a href="/admin/logout" class="py-4 px-1 border-b-2 border-transparent font-bold text-sm text-red-500 hover:text-red-700 flex items-center gap-2 ml-auto">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Body Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-8">
+    
+    <!-- 5 STAT CARDS GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+      
+      <!-- Card 1: Import Software -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Import Software</span>
+          <span class="text-2xl font-black text-slate-800 mt-1 block"><%= stats.totalImports %></span>
+        </div>
+        <div class="bg-blue-50 text-blue-600 p-3 rounded-xl">
+          <i data-lucide="bot" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Card 2: Recent Imports -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Recent Imports</span>
+          <span class="text-2xl font-black text-slate-800 mt-1 block"><%= stats.recentLogs ? stats.recentLogs.length : 0 %></span>
+        </div>
+        <div class="bg-indigo-50 text-indigo-600 p-3 rounded-xl">
+          <i data-lucide="history" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Card 3: Drafts -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Drafts Pending</span>
+          <span class="text-2xl font-black text-amber-600 mt-1 block"><%= stats.totalDrafts %></span>
+        </div>
+        <div class="bg-amber-50 text-amber-600 p-3 rounded-xl">
+          <i data-lucide="file-edit" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Card 4: Pending Updates -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Pending Updates</span>
+          <span class="text-2xl font-black text-emerald-600 mt-1 block"><%= pendingUpdates ? pendingUpdates.length : 0 %></span>
+        </div>
+        <div class="bg-emerald-50 text-emerald-600 p-3 rounded-xl">
+          <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Card 5: AI Usage -->
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">AI Usage</span>
+          <span class="text-2xl font-black text-purple-600 mt-1 block"><%= (stats.totalTokensUsed / 1000).toFixed(1) %>k</span>
+          <span class="text-[10px] text-slate-400">Tokens</span>
+        </div>
+        <div class="bg-purple-50 text-purple-600 p-3 rounded-xl">
+          <i data-lucide="cpu" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 🤖 MAIN AI IMPORT CARD -->
+    <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 rounded-2xl p-6 sm:p-8 shadow-2xl border border-blue-900/40 text-white relative overflow-hidden">
+      <!-- Glow decoration -->
+      <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800 pb-5 mb-6 gap-3">
+        <div class="flex items-center gap-3">
+          <div class="bg-gradient-to-tr from-blue-600 to-indigo-500 p-3 rounded-xl text-white shadow-lg shadow-blue-500/20">
+            <i data-lucide="sparkles" class="w-6 h-6 text-amber-300"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-extrabold tracking-wide">AI Powered Software Import Engine</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Import software from Name, Official Website, GitHub, or Play Store. AI generates metadata, previews JSON & creates reviewable drafts.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 IMPORT SOURCE TABS -->
+      <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-3 mb-5" id="import-tabs-header">
+        <button type="button" data-source="name" class="import-tab-btn active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-md flex items-center gap-2">
+          <i data-lucide="type" class="w-3.5 h-3.5"></i>
+          <span>1. Software Name</span>
+        </button>
+        <button type="button" data-source="website" class="import-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-2">
+          <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+          <span>2. Official Website</span>
+        </button>
+        <button type="button" data-source="github" class="import-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-2">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i>
+          <span>3. GitHub Repo</span>
+        </button>
+        <button type="button" data-source="playstore" class="import-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white flex items-center gap-2">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+          <span>4. Play Store URL</span>
+        </button>
+      </div>
+
+      <!-- INPUT FORM -->
+      <form id="ai-import-form" class="space-y-4">
+        <input type="hidden" id="selected-source-type" value="name">
+
+        <div class="relative">
+          <label id="input-label" class="block text-xs font-extrabold uppercase tracking-wider text-blue-300 mb-2">Enter Software Name:</label>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-grow">
+              <input 
+                type="text" 
+                id="ai-import-input" 
+                placeholder="e.g. Google Chrome, VLC Media Player, 7-Zip" 
+                required 
+                class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner"
+              >
+            </div>
+            <button 
+              type="submit" 
+              id="ai-import-submit-btn" 
+              class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 focus:outline-none"
+            >
+              <i data-lucide="zap" class="w-4 h-4 text-amber-300 fill-amber-300"></i>
+              <span>⚡ Generate AI Metadata</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Box -->
+        <div id="import-status-box" class="hidden flex items-center gap-3 p-3.5 rounded-xl bg-blue-950/60 border border-blue-800/60 text-xs text-blue-200">
+          <div class="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+          <span id="import-status-msg" class="font-medium">Connecting to official source & retrieving software assets...</span>
+        </div>
+
+        <!-- Alert Box -->
+        <div id="import-alert-box" class="hidden p-3.5 rounded-xl text-xs font-medium border"></div>
+      </form>
+    </div>
+
+    <!-- 📝 REVIEW & DRAFT EDITOR MODAL / DRAWER -->
+    <div id="ai-review-drawer" class="hidden bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 rounded-xl bg-amber-50 text-amber-600 border border-amber-200">
+            <i data-lucide="edit-3" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900 uppercase tracking-wider">AI Generated Draft Review</h3>
+            <p class="text-xs text-slate-400">Review, edit form fields, or inspect structured JSON before saving draft or publishing.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="view-json-btn" class="px-3 py-1.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-1.5">
+            <i data-lucide="code" class="w-3.5 h-3.5 text-blue-600"></i> View JSON
+          </button>
+        </div>
+      </div>
+
+      <!-- JSON Viewer Box -->
+      <div id="json-viewer-container" class="hidden bg-slate-950 text-emerald-400 font-mono text-xs p-4 rounded-xl border border-slate-800 overflow-x-auto max-h-60">
+        <pre id="json-output-text">{}</pre>
+      </div>
+
+      <!-- Draft Form -->
+      <form id="save-draft-form" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Software Name</label>
+            <input type="text" id="draft-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Category</label>
+            <select id="draft-category" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500">
+              <% categories.forEach(cat => { %>
+                <option value="<%= cat.id %>"><%= cat.name %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Version & Size</label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" id="draft-version" placeholder="1.0.0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+              <input type="text" id="draft-size" placeholder="25 MB" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Developer</label>
+            <input type="text" id="draft-developer" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Publisher</label>
+            <input type="text" id="draft-publisher" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">License</label>
+            <input type="text" id="draft-license" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Platform</label>
+            <select id="draft-platform" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+              <option value="windows">Windows</option>
+              <option value="android">Android</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Short Description</label>
+          <input type="text" id="draft-short-desc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Description Overview</label>
+          <textarea id="draft-full-desc" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 leading-relaxed focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Key Features (One per line)</label>
+            <textarea id="draft-features" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">System Requirements</label>
+            <textarea id="draft-sysreq" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800"></textarea>
+          </div>
+        </div>
+
+        <!-- SEO Metadata -->
+        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">SEO Title & Meta Tags</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">SEO Title</label>
+              <input type="text" id="draft-seo-title" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-blue-700 font-bold">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">SEO Keywords</label>
+              <input type="text" id="draft-seo-keywords" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-700">
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Footer -->
+        <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+          <button type="button" id="save-as-draft-btn" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow transition-colors flex items-center gap-1.5">
+            <i data-lucide="save" class="w-4 h-4"></i>
+            <span>💾 Save as Draft</span>
+          </button>
+          <button type="button" id="publish-now-btn" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1.5">
+            <i data-lucide="rocket" class="w-4 h-4"></i>
+            <span>🚀 Publish Now</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- DRAFTS TABLE -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+          <i data-lucide="file-edit" class="w-4 h-4 text-amber-500"></i>
+          <span>Saved Drafts Pending Review (<%= drafts.length %>)</span>
+        </h3>
+      </div>
+
+      <% if (drafts && drafts.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold border-b border-slate-200">
+                <th class="p-3">Software</th>
+                <th class="p-3">Category</th>
+                <th class="p-3">Version</th>
+                <th class="p-3">Saved Date</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <% drafts.forEach(d => { %>
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-3 font-bold text-slate-800"><%= d.name %></td>
+                  <td class="p-3 text-slate-500"><%= d.platform || 'windows' %></td>
+                  <td class="p-3"><span class="bg-slate-100 px-2 py-0.5 rounded font-mono font-bold text-slate-700">v<%= d.version || '1.0.0' %></span></td>
+                  <td class="p-3 text-slate-400"><%= new Date(d.created_at).toLocaleDateString() %></td>
+                  <td class="p-3 text-right space-x-2">
+                    <button data-id="<%= d.id %>" class="publish-draft-btn bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg font-bold text-[11px] transition-colors">🚀 Publish</button>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="p-6 text-center text-slate-400 text-xs">No pending drafts. Imported software saved as draft will appear here.</div>
+      <% } %>
+    </div>
+
+  </main>
+
+  <script>
+    (function() {
+      let currentPayload = null;
+
+      const tabsHeader = document.getElementById('import-tabs-header');
+      const inputLabel = document.getElementById('input-label');
+      const input = document.getElementById('ai-import-input');
+      const selectedSourceType = document.getElementById('selected-source-type');
+
+      const form = document.getElementById('ai-import-form');
+      const submitBtn = document.getElementById('ai-import-submit-btn');
+      const statusBox = document.getElementById('import-status-box');
+      const statusMsg = document.getElementById('import-status-msg');
+      const alertBox = document.getElementById('import-alert-box');
+
+      const drawer = document.getElementById('ai-review-drawer');
+      const jsonBtn = document.getElementById('view-json-btn');
+      const jsonContainer = document.getElementById('json-viewer-container');
+      const jsonText = document.getElementById('json-output-text');
+
+      const draftName = document.getElementById('draft-name');
+      const draftCategory = document.getElementById('draft-category');
+      const draftVersion = document.getElementById('draft-version');
+      const draftSize = document.getElementById('draft-size');
+      const draftDeveloper = document.getElementById('draft-developer');
+      const draftPublisher = document.getElementById('draft-publisher');
+      const draftLicense = document.getElementById('draft-license');
+      const draftPlatform = document.getElementById('draft-platform');
+      const draftShortDesc = document.getElementById('draft-short-desc');
+      const draftFullDesc = document.getElementById('draft-full-desc');
+      const draftFeatures = document.getElementById('draft-features');
+      const draftSysreq = document.getElementById('draft-sysreq');
+      const draftSeoTitle = document.getElementById('draft-seo-title');
+      const draftSeoKeywords = document.getElementById('draft-seo-keywords');
+
+      const saveDraftBtn = document.getElementById('save-as-draft-btn');
+      const publishNowBtn = document.getElementById('publish-now-btn');
+
+      // Tab Switcher
+      if (tabsHeader) {
+        tabsHeader.querySelectorAll('.import-tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            tabsHeader.querySelectorAll('.import-tab-btn').forEach(b => {
+              b.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
+              b.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            btn.classList.remove('bg-slate-800', 'text-slate-300');
+            btn.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+
+            const source = btn.dataset.source;
+            selectedSourceType.value = source;
+
+            if (source === 'name') {
+              inputLabel.textContent = 'Enter Software Name:';
+              input.placeholder = 'e.g. Google Chrome, VLC Media Player, 7-Zip';
+            } else if (source === 'website') {
+              inputLabel.textContent = 'Enter Official Website URL:';
+              input.placeholder = 'e.g. https://www.google.com/chrome/';
+            } else if (source === 'github') {
+              inputLabel.textContent = 'Enter GitHub Repository URL:';
+              input.placeholder = 'e.g. https://github.com/vlc/vlc';
+            } else if (source === 'playstore') {
+              inputLabel.textContent = 'Enter Google Play Store App URL:';
+              input.placeholder = 'e.g. https://play.google.com/store/apps/details?id=com.whatsapp';
+            }
+          });
+        });
+      }
+
+      // Toggle JSON View
+      if (jsonBtn) {
+        jsonBtn.addEventListener('click', () => {
+          jsonContainer.classList.toggle('hidden');
+        });
+      }
+
+      // Submit Import Form
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const val = input.value.trim();
+          if (!val) return;
+
+          statusBox.classList.remove('hidden');
+          alertBox.classList.add('hidden');
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+          const steps = [
+            'Fetching metadata from official source...',
+            'Gathering logos, icons & screenshots...',
+            'Synthesizing features, pros/cons & system requirements...',
+            'Generating structured JSON & SEO meta tags...'
+          ];
+          let sIdx = 0;
+          const timer = setInterval(() => {
+            sIdx = (sIdx + 1) % steps.length;
+            statusMsg.textContent = steps[sIdx];
+          }, 2200);
+
+          try {
+            const res = await fetch('/admin/ai-import/generate', {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({ input: val, source_type: selectedSourceType.value })
+            });
+
+            clearInterval(timer);
+
+            const contentType = res.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+              throw new Error('Admin session expired or server returned non-JSON. Please refresh and log in again.');
+            }
+
+            const result = await res.json();
+            if (!res.ok || !result.success) {
+              throw new Error(result.error || 'Import generation failed.');
+            }
+
+            currentPayload = result.data;
+            jsonText.textContent = JSON.stringify(result.data, null, 2);
+            populateDrawer(result.data);
+
+          } catch (err) {
+            clearInterval(timer);
+            alertBox.classList.remove('hidden', 'bg-emerald-900/40', 'border-emerald-700/50', 'text-emerald-200');
+            alertBox.classList.add('bg-red-900/40', 'border-red-700/50', 'text-red-200');
+            alertBox.textContent = err.message || 'Error executing AI import.';
+          } finally {
+            statusBox.classList.add('hidden');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          }
+        });
+      }
+
+      function populateDrawer(p) {
+        draftName.value = p.name || '';
+        if (p.category_id) draftCategory.value = p.category_id;
+        draftVersion.value = p.version || '1.0.0';
+        draftSize.value = p.size || '25 MB';
+        draftDeveloper.value = p.developer || '';
+        draftPublisher.value = p.publisher || '';
+        draftLicense.value = p.license || 'Freeware';
+        draftPlatform.value = p.platform || 'windows';
+        draftShortDesc.value = p.short_description || '';
+        draftFullDesc.value = p.full_description || '';
+        draftFeatures.value = Array.isArray(p.features) ? p.features.join('\n') : (p.features || '');
+        draftSysreq.value = p.system_requirements || '';
+        draftSeoTitle.value = (p.seo && p.seo.title) || p.seo_title || '';
+        draftSeoKeywords.value = (p.seo && Array.isArray(p.seo.keywords)) ? p.seo.keywords.join(', ') : (p.seo_keywords || '');
+
+        drawer.classList.remove('hidden');
+        drawer.scrollIntoView({ behavior: 'smooth' });
+        if (window.lucide) lucide.createIcons();
+      }
+
+      // Save Draft Handler
+      if (saveDraftBtn) {
+        saveDraftBtn.addEventListener('click', async () => {
+          if (!currentPayload) return;
+          saveDraftBtn.disabled = true;
+          saveDraftBtn.textContent = 'Saving...';
+
+          const payload = {
+            ...currentPayload,
+            name: draftName.value,
+            category_id: draftCategory.value,
+            version: draftVersion.value,
+            size: draftSize.value,
+            developer: draftDeveloper.value,
+            publisher: draftPublisher.value,
+            license: draftLicense.value,
+            platform: draftPlatform.value,
+            short_description: draftShortDesc.value,
+            full_description: draftFullDesc.value,
+            features: draftFeatures.value.split('\n').filter(Boolean),
+            system_requirements: draftSysreq.value,
+            seo_title: draftSeoTitle.value,
+            seo_keywords: draftSeoKeywords.value
+          };
+
+          try {
+            const res = await fetch('/admin/ai-import/save-draft', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            if (result.success) {
+              alert(result.message);
+              window.location.reload();
+            } else {
+              alert('Save draft error: ' + result.error);
+            }
+          } catch (e) {
+            alert('Error: ' + e.message);
+          } finally {
+            saveDraftBtn.disabled = false;
+            saveDraftBtn.textContent = '💾 Save as Draft';
+          }
+        });
+      }
+
+      // Publish Now Handler
+      if (publishNowBtn) {
+        publishNowBtn.addEventListener('click', async () => {
+          if (!currentPayload) return;
+          publishNowBtn.disabled = true;
+          publishNowBtn.textContent = 'Publishing...';
+
+          const payload = {
+            ...currentPayload,
+            name: draftName.value,
+            category_id: draftCategory.value,
+            version: draftVersion.value,
+            size: draftSize.value,
+            developer: draftDeveloper.value,
+            publisher: draftPublisher.value,
+            license: draftLicense.value,
+            platform: draftPlatform.value,
+            short_description: draftShortDesc.value,
+            full_description: draftFullDesc.value,
+            features: draftFeatures.value.split('\n').filter(Boolean),
+            system_requirements: draftSysreq.value,
+            seo_title: draftSeoTitle.value,
+            seo_keywords: draftSeoKeywords.value,
+            is_draft: 0
+          };
+
+          try {
+            const res = await fetch('/admin/ai-import/publish', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            if (result.success) {
+              alert('🚀 Software published live on website!');
+              window.location.href = '/admin/software';
+            } else {
+              alert('Publish error: ' + result.error);
+            }
+          } catch (e) {
+            alert('Error: ' + e.message);
+          } finally {
+            publishNowBtn.disabled = false;
+            publishNowBtn.textContent = '🚀 Publish Now';
+          }
+        });
+      }
+
+      // Publish Draft Item from Table
+      document.querySelectorAll('.publish-draft-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const draftId = btn.dataset.id;
+          btn.disabled = true;
+          try {
+            const res = await fetch('/admin/ai-import/publish/' + draftId, { method: 'POST' });
+            const result = await res.json();
+            if (result.success) {
+              alert('🚀 Draft published live!');
+              window.location.reload();
+            } else {
+              alert('Error: ' + result.error);
+            }
+          } catch (e) {
+            alert('Error: ' + e.message);
+          } finally {
+            btn.disabled = false;
+          }
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>

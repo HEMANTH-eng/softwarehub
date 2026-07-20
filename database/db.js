@@ -65,7 +65,13 @@ function initializeSchema() {
         "seo_keywords TEXT",
         "faq TEXT",
         "recommended_software TEXT",
-        "screenshots TEXT"
+        "screenshots TEXT",
+        "is_draft INTEGER DEFAULT 0",
+        "github_url TEXT",
+        "official_url TEXT",
+        "last_checked DATETIME",
+        "last_ai_update DATETIME",
+        "safety_info TEXT"
       ];
 
       let completed = 0;

@@ -64,3 +64,13 @@ CREATE TABLE IF NOT EXISTS app_requests (
   status TEXT DEFAULT 'pending',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS import_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  software_name TEXT NOT NULL,
+  source TEXT NOT NULL,
+  duration_ms INTEGER DEFAULT 0,
+  ai_tokens INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'success',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

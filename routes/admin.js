@@ -8,6 +8,7 @@ const db = require('../database/db');
 const { generateSoftwareDetails } = require('../controllers/aiController');
 const { searchAndPreview, publishDirectly } = require('../controllers/autoPublisherController');
 const { fetchNotifications, dismissNotification, autoFulfillRequest } = require('../controllers/notificationController');
+const { renderAiImportPage, generateImportPreview, saveDraft, publishSoftware, checkUpdates, updateVersion } = require('../controllers/aiImportController');
 
 // Helper to load current config (uses cached version from server.js)
 function getConfig(req) {
@@ -264,6 +265,14 @@ router.post('/ai/auto-publish', requireAuth, publishDirectly);
 router.get('/api/notifications', requireAuth, fetchNotifications);
 router.post('/api/notifications/dismiss', requireAuth, dismissNotification);
 router.post('/api/notifications/fulfill-request', requireAuth, autoFulfillRequest);
+
+// --- AI IMPORT SYSTEM ENDPOINTS ---
+router.get('/ai-import', requireAuth, renderAiImportPage);
+router.post('/ai-import/generate', requireAuth, generateImportPreview);
+router.post('/ai-import/save-draft', requireAuth, saveDraft);
+router.post('/ai-import/publish/:id?', requireAuth, publishSoftware);
+router.post('/ai-import/check-updates', requireAuth, checkUpdates);
+router.post('/ai-import/update-version/:id', requireAuth, updateVersion);
 
 // POST Add Software
 router.post(
