@@ -19,3 +19,8 @@ pnpm-debug.log*
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Storage binaries
+storage/software/*.exe
+storage/software/*.msi
+storage/software/*.zip

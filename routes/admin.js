@@ -5,6 +5,9 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const db = require('../database/db');
+const { generateSoftwareDetails } = require('../controllers/aiController');
+const { searchAndPreview, publishDirectly } = require('../controllers/autoPublisherController');
+const { fetchNotifications, dismissNotification, autoFulfillRequest } = require('../controllers/notificationController');
 
 // Helper to load current config (uses cached version from server.js)
 function getConfig(req) {
@@ -41,10 +44,10 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (file.fieldname === 'icon_image') {
       cb(null, path.resolve(__dirname, '../storage/images'));
-    } else if (file.fieldname === 'software_file') {
+    } else if (file.fieldname === 'software_file' || file.fieldname === 'installer_file') {
       cb(null, path.resolve(__dirname, '../storage/software'));
     } else {
-      cb(new Error('Invalid field name for upload'), null);
+      cb(null, path.resolve(__dirname, '../storage/software'));
     }
   },
   filename: function (req, file, cb) {
@@ -74,6 +77,12 @@ function requireAuth(req, res, next) {
   if (req.session && req.session.adminId) {
     next();
   } else {
+    if (req.originalUrl.includes('/admin/ai/') || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      return res.status(401).json({
+        success: false,
+        error: 'Admin session expired or unauthorized. Please refresh the page and log in again.'
+      });
+    }
     res.redirect('/admin/login');
   }
 }
@@ -237,6 +246,25 @@ router.get('/software', requireAuth, async (req, res) => {
   }
 });
 
+// --- AI PUBLISHER GENERATION ENDPOINT ---
+router.post(
+  '/ai/generate',
+  requireAuth,
+  upload.fields([
+    { name: 'installer_file', maxCount: 1 }
+  ]),
+  generateSoftwareDetails
+);
+
+// --- ONE-CLICK AUTO PUBLISHER ENDPOINTS ---
+router.post('/ai/auto-search', requireAuth, searchAndPreview);
+router.post('/ai/auto-publish', requireAuth, publishDirectly);
+
+// --- NOTIFICATION & ALERT ENDPOINTS ---
+router.get('/api/notifications', requireAuth, fetchNotifications);
+router.post('/api/notifications/dismiss', requireAuth, dismissNotification);
+router.post('/api/notifications/fulfill-request', requireAuth, autoFulfillRequest);
+
 // POST Add Software
 router.post(
   '/software/add',
@@ -246,11 +274,18 @@ router.post(
     { name: 'software_file', maxCount: 1 }
   ]),
   async (req, res) => {
-    const { name, category_id, short_description, full_description, version, size, is_featured, is_new, platform } = req.body;
+    const {
+      name, category_id, short_description, full_description, version, size,
+      is_featured, is_new, platform, developer, publisher, license,
+      operating_systems, architecture, system_requirements, installation_guide,
+      features, changelog, pros, cons, tags, seo_title, seo_meta_description,
+      seo_keywords, faq, recommended_software, screenshots,
+      existing_icon_image, existing_file_path
+    } = req.body;
     
     try {
-      const iconFile = req.files['icon_image'] ? req.files['icon_image'][0].filename : '';
-      const softwareFile = req.files['software_file'] ? req.files['software_file'][0].filename : '';
+      let iconFile = req.files['icon_image'] ? req.files['icon_image'][0].filename : (existing_icon_image || '');
+      let softwareFile = req.files['software_file'] ? req.files['software_file'][0].filename : (existing_file_path || '');
       
       if (!name || !category_id || !softwareFile) {
         return res.status(400).send('Software Name, Category, and Installer Binary are required.');
@@ -258,8 +293,10 @@ router.post(
       
       await db.run(
         `INSERT INTO software 
-         (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new, platform) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new, platform,
+          developer, publisher, license, operating_systems, architecture, system_requirements, installation_guide,
+          features, changelog, pros, cons, tags, seo_title, seo_meta_description, seo_keywords, faq, recommended_software, screenshots) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           name,
           category_id,
@@ -271,7 +308,25 @@ router.post(
           softwareFile,
           is_featured ? 1 : 0,
           is_new ? 1 : 0,
-          platform || 'windows'
+          platform || 'windows',
+          developer || '',
+          publisher || '',
+          license || 'Freeware',
+          operating_systems || 'Windows 11, Windows 10',
+          architecture || '64-bit (x64)',
+          system_requirements || '',
+          installation_guide || '',
+          typeof features === 'object' ? JSON.stringify(features) : (features || ''),
+          changelog || '',
+          typeof pros === 'object' ? JSON.stringify(pros) : (pros || ''),
+          typeof cons === 'object' ? JSON.stringify(cons) : (cons || ''),
+          tags || '',
+          seo_title || '',
+          seo_meta_description || '',
+          seo_keywords || '',
+          typeof faq === 'object' ? JSON.stringify(faq) : (faq || ''),
+          typeof recommended_software === 'object' ? JSON.stringify(recommended_software) : (recommended_software || ''),
+          typeof screenshots === 'object' ? JSON.stringify(screenshots) : (screenshots || '[]')
         ]
       );
       
@@ -293,7 +348,14 @@ router.post(
   ]),
   async (req, res) => {
     const softwareId = req.params.id;
-    const { name, category_id, short_description, full_description, version, size, is_featured, is_new, platform } = req.body;
+    const {
+      name, category_id, short_description, full_description, version, size,
+      is_featured, is_new, platform, developer, publisher, license,
+      operating_systems, architecture, system_requirements, installation_guide,
+      features, changelog, pros, cons, tags, seo_title, seo_meta_description,
+      seo_keywords, faq, recommended_software, screenshots,
+      existing_icon_image, existing_file_path
+    } = req.body;
     
     try {
       const existing = await db.get('SELECT * FROM software WHERE id = ?', [softwareId]);
@@ -303,10 +365,17 @@ router.post(
       
       let iconFile = existing.icon_image;
       let softwareFile = existing.file_path;
+
+      if (existing_icon_image) {
+        iconFile = existing_icon_image;
+      }
+      if (existing_file_path) {
+        softwareFile = existing_file_path;
+      }
       
       // If new icon is uploaded, delete old one and assign new filename
       if (req.files['icon_image']) {
-        if (existing.icon_image) {
+        if (existing.icon_image && existing.icon_image !== req.files['icon_image'][0].filename) {
           const oldIconPath = path.resolve(__dirname, '../storage/images', existing.icon_image);
           if (fs.existsSync(oldIconPath)) {
             fs.unlinkSync(oldIconPath);
@@ -317,7 +386,7 @@ router.post(
       
       // If new setup installer file is uploaded, delete old installer file
       if (req.files['software_file']) {
-        if (existing.file_path) {
+        if (existing.file_path && existing.file_path !== req.files['software_file'][0].filename) {
           const oldFilePath = path.resolve(__dirname, '../storage/software', existing.file_path);
           if (fs.existsSync(oldFilePath)) {
             fs.unlinkSync(oldFilePath);
@@ -329,7 +398,11 @@ router.post(
       await db.run(
         `UPDATE software 
          SET name = ?, category_id = ?, short_description = ?, full_description = ?, 
-             version = ?, size = ?, icon_image = ?, file_path = ?, is_featured = ?, is_new = ?, platform = ?, updated_at = CURRENT_TIMESTAMP
+             version = ?, size = ?, icon_image = ?, file_path = ?, is_featured = ?, is_new = ?, platform = ?,
+             developer = ?, publisher = ?, license = ?, operating_systems = ?, architecture = ?,
+             system_requirements = ?, installation_guide = ?, features = ?, changelog = ?,
+             pros = ?, cons = ?, tags = ?, seo_title = ?, seo_meta_description = ?,
+             seo_keywords = ?, faq = ?, recommended_software = ?, screenshots = ?, updated_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
         [
           name,
@@ -343,6 +416,24 @@ router.post(
           is_featured ? 1 : 0,
           is_new ? 1 : 0,
           platform || 'windows',
+          developer || '',
+          publisher || '',
+          license || 'Freeware',
+          operating_systems || 'Windows 11, Windows 10',
+          architecture || '64-bit (x64)',
+          system_requirements || '',
+          installation_guide || '',
+          typeof features === 'object' ? JSON.stringify(features) : (features || ''),
+          changelog || '',
+          typeof pros === 'object' ? JSON.stringify(pros) : (pros || ''),
+          typeof cons === 'object' ? JSON.stringify(cons) : (cons || ''),
+          tags || '',
+          seo_title || '',
+          seo_meta_description || '',
+          seo_keywords || '',
+          typeof faq === 'object' ? JSON.stringify(faq) : (faq || ''),
+          typeof recommended_software === 'object' ? JSON.stringify(recommended_software) : (recommended_software || ''),
+          typeof screenshots === 'object' ? JSON.stringify(screenshots) : (screenshots || '[]'),
           softwareId
         ]
       );

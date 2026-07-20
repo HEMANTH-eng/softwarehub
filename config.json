@@ -58,5 +58,12 @@
   },
   "admin": {
     "sessionSecret": "dfa97b2d5612c8a49c63b467e91f0a82"
+  },
+  "ai": {
+    "provider": "gemini",
+    "apiKey": "",
+    "model": "gemini-2.0-flash",
+    "timeoutMs": 35000,
+    "fallbackToScraper": true
   }
 }

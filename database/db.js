@@ -45,14 +45,41 @@ function initializeSchema() {
       console.error('Error initializing database schema', err);
     } else {
       console.log('Database schema checked/initialized successfully.');
-      // Automatically run migration to add platform column if it doesn't exist
-      db.run("ALTER TABLE software ADD COLUMN platform TEXT DEFAULT 'windows'", (migrateErr) => {
-        if (migrateErr && !migrateErr.message.includes('duplicate column name')) {
-          console.error('Error migrating software table for platform column:', migrateErr);
-        } else {
-          console.log('Database schema platform column verified/migrated.');
-        }
-        seedDefaultAdminAndCategories();
+      
+      const newColumns = [
+        "platform TEXT DEFAULT 'windows'",
+        "developer TEXT",
+        "publisher TEXT",
+        "license TEXT",
+        "operating_systems TEXT",
+        "architecture TEXT",
+        "system_requirements TEXT",
+        "installation_guide TEXT",
+        "features TEXT",
+        "changelog TEXT",
+        "pros TEXT",
+        "cons TEXT",
+        "tags TEXT",
+        "seo_title TEXT",
+        "seo_meta_description TEXT",
+        "seo_keywords TEXT",
+        "faq TEXT",
+        "recommended_software TEXT",
+        "screenshots TEXT"
+      ];
+
+      let completed = 0;
+      newColumns.forEach((colDef) => {
+        db.run(`ALTER TABLE software ADD COLUMN ${colDef}`, (migrateErr) => {
+          if (migrateErr && !migrateErr.message.includes('duplicate column name')) {
+            console.error(`Error adding column ${colDef}:`, migrateErr);
+          }
+          completed++;
+          if (completed === newColumns.length) {
+            console.log('Database schema software table columns verified/migrated.');
+            seedDefaultAdminAndCategories();
+          }
+        });
       });
     }
   });

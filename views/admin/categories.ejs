@@ -12,50 +12,8 @@
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-  <!-- Top Admin Nav Banner -->
-  <header class="bg-slate-900 text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center space-x-3">
-          <div class="bg-blue-600 p-2 rounded-lg text-white">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
-          </div>
-          <span class="font-extrabold text-base tracking-tight"><%= config.site.name %> Admin Panel</span>
-          
-          <!-- Admin Platform Switcher (W & A) -->
-          <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700 ml-4 shrink-0">
-            <a 
-              href="/set-platform?platform=windows&redirect=<%= encodeURIComponent(currentUrl) %>" 
-              title="Switch to Windows View"
-              class="flex items-center justify-center w-7 h-7 rounded-md transition-all <%= (typeof platform !== 'undefined' && platform === 'windows') ? 'bg-slate-700 text-blue-400 shadow-sm' : 'text-slate-400 hover:text-slate-200' %>"
-            >
-              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 3.449L9.75 2.1v9.45H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.1zM11.25 1.899L24 0v11.55H11.25V1.899zM11.25 12.45H24v11.55l-12.75-1.9v-9.65z"/>
-              </svg>
-            </a>
-            <a 
-              href="/set-platform?platform=android&redirect=<%= encodeURIComponent(currentUrl) %>" 
-              title="Switch to Android View"
-              class="flex items-center justify-center w-7 h-7 rounded-md transition-all <%= (typeof platform !== 'undefined' && platform === 'android') ? 'bg-slate-700 text-green-400 shadow-sm' : 'text-slate-400 hover:text-slate-200' %>"
-            >
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.523 15.3414C17.523 15.9329 17.0427 16.4116 16.4526 16.4116C15.8624 16.4116 15.3822 15.9329 15.3822 15.3414C15.3822 14.7499 15.8624 14.2712 16.4526 14.2712C17.0427 14.2712 17.523 14.7499 17.523 15.3414ZM8.6178 15.3414C8.6178 15.9329 8.13756 16.4116 7.5474 16.4116C6.95724 16.4116 6.477 15.9329 6.477 15.3414C6.477 14.7499 6.95724 14.2712 7.5474 14.2712C8.13756 14.2712 8.6178 14.7499 8.6178 15.3414ZM17.9035 11.2683H6.09652C5.48512 11.2683 5 11.7547 5 12.3683V18.9959C5 19.6095 5.48512 20.0959 6.09652 20.0959H17.9035C18.5149 20.0959 19 19.6095 19 18.9959V12.3683C19 11.7547 18.5149 11.2683 17.9035 11.2683ZM16.8929 6.78659L18.4552 4.07317C18.5682 3.87683 18.4984 3.62683 18.3027 3.51341C18.107 3.40051 17.8576 3.47051 17.7447 3.66683L16.1472 6.43902C14.9351 5.88902 13.5358 5.57317 12 5.57317C10.4642 5.57317 9.06492 5.88902 7.85284 6.43902L6.25532 3.66683C6.14244 3.47051 5.893 3.40051 5.69732 3.51341C5.50164 3.62683 5.4318 3.87683 5.54476 4.07317L7.10712 6.78659C4.64652 8.09341 3 10.669 3 13.6341H21C21 10.669 19.3535 8.09341 16.8929 6.78659Z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-4 text-sm font-medium">
-          <span class="text-slate-400">Welcome, <strong><%= adminUsername %></strong></span>
-          <div class="h-4 w-[1px] bg-slate-700"></div>
-          <a href="/" target="_blank" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors">
-            <span>View Site</span>
-            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </header>
+  <!-- Top Banner Header -->
+  <%- include('partials/admin_header') %>
 
   <!-- Navigation Tab Bar -->
   <div class="bg-white border-b border-slate-200">

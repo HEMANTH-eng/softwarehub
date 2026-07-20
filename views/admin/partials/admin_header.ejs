@@ -1,0 +1,241 @@
+<!-- Admin Top Banner Header with Notifications & Alerts Bell -->
+<header class="bg-slate-900 text-white shadow-md relative z-40">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      
+      <!-- Brand & Platform Switcher -->
+      <div class="flex items-center space-x-3">
+        <div class="bg-blue-600 p-2 rounded-lg text-white">
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+        </div>
+        <span class="font-extrabold text-base tracking-tight"><%= config.site.name %> Admin Panel</span>
+        
+        <!-- Platform Switcher -->
+        <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700 ml-4 shrink-0">
+          <a 
+            href="/set-platform?platform=windows&redirect=<%= encodeURIComponent(currentUrl) %>" 
+            title="Switch to Windows View"
+            class="flex items-center justify-center w-7 h-7 rounded-md transition-all <%= (typeof platform !== 'undefined' && platform === 'windows') ? 'bg-slate-700 text-blue-400 shadow-sm' : 'text-slate-400 hover:text-slate-200' %>"
+          >
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 3.449L9.75 2.1v9.45H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.1zM11.25 1.899L24 0v11.55H11.25V1.899zM11.25 12.45H24v11.55l-12.75-1.9v-9.65z"/>
+            </svg>
+          </a>
+          <a 
+            href="/set-platform?platform=android&redirect=<%= encodeURIComponent(currentUrl) %>" 
+            title="Switch to Android View"
+            class="flex items-center justify-center w-7 h-7 rounded-md transition-all <%= (typeof platform !== 'undefined' && platform === 'android') ? 'bg-slate-700 text-green-400 shadow-sm' : 'text-slate-400 hover:text-slate-200' %>"
+          >
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.523 15.3414C17.523 15.9329 17.0427 16.4116 16.4526 16.4116C15.8624 16.4116 15.3822 15.9329 15.3822 15.3414C15.3822 14.7499 15.8624 14.2712 16.4526 14.2712C17.0427 14.2712 17.523 14.7499 17.523 15.3414ZM8.6178 15.3414C8.6178 15.9329 8.13756 16.4116 7.5474 16.4116C6.95724 16.4116 6.477 15.9329 6.477 15.3414C6.477 14.7499 6.95724 14.2712 7.5474 14.2712C8.13756 14.2712 8.6178 14.7499 8.6178 15.3414ZM17.9035 11.2683H6.09652C5.48512 11.2683 5 11.7547 5 12.3683V18.9959C5 19.6095 5.48512 20.0959 6.09652 20.0959H17.9035C18.5149 20.0959 19 19.6095 19 18.9959V12.3683C19 11.7547 18.5149 11.2683 17.9035 11.2683ZM16.8929 6.78659L18.4552 4.07317C18.5682 3.87683 18.4984 3.62683 18.3027 3.51341C18.107 3.40051 17.8576 3.47051 17.7447 3.66683L16.1472 6.43902C14.9351 5.88902 13.5358 5.57317 12 5.57317C10.4642 5.57317 9.06492 5.88902 7.85284 6.43902L6.25532 3.66683C6.14244 3.47051 5.893 3.40051 5.69732 3.51341C5.50164 3.62683 5.4318 3.87683 5.54476 4.07317L7.10712 6.78659C4.64652 8.09341 3 10.669 3 13.6341H21C21 10.669 19.3535 8.09341 16.8929 6.78659Z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Header Actions (Notifications + User + View Site) -->
+      <div class="flex items-center space-x-4 text-sm font-medium">
+        
+        <!-- 🔔 NOTIFICATION BELL DROPDOWN -->
+        <div class="relative" id="notif-dropdown-wrapper">
+          <button 
+            type="button" 
+            id="notif-bell-btn" 
+            class="relative p-2 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors focus:outline-none"
+            title="Notifications & Alerts"
+          >
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-slate-900 shadow">0</span>
+          </button>
+
+          <!-- Dropdown Panel -->
+          <div 
+            id="notif-dropdown-panel" 
+            class="hidden absolute right-0 mt-3 w-80 sm:w-96 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl text-left overflow-hidden z-50 transform transition-all"
+          >
+            <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+              <div class="flex items-center gap-2">
+                <i data-lucide="bell-ring" class="w-4 h-4 text-blue-400"></i>
+                <span class="font-bold text-xs text-white uppercase tracking-wider">Notifications & Alerts</span>
+              </div>
+              <span id="notif-count-label" class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">0 Alerts</span>
+            </div>
+
+            <!-- List Container -->
+            <div id="notif-list-container" class="max-h-80 overflow-y-auto divide-y divide-slate-800 text-xs">
+              <div class="p-6 text-center text-slate-400">
+                <i data-lucide="bell-off" class="w-8 h-8 text-slate-600 mx-auto mb-2"></i>
+                <p>No active alerts right now.</p>
+              </div>
+            </div>
+
+            <div class="p-2.5 bg-slate-950 border-t border-slate-800 text-center">
+              <a href="/admin/requests" class="text-[11px] font-semibold text-blue-400 hover:text-blue-300 transition-colors">Manage App Requests →</a>
+            </div>
+          </div>
+        </div>
+
+        <span class="text-slate-400 hidden sm:inline">Welcome, <strong><%= adminUsername %></strong></span>
+        <div class="h-4 w-[1px] bg-slate-700"></div>
+        <a href="/" target="_blank" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors">
+          <span>View Site</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    const bellBtn = document.getElementById('notif-bell-btn');
+    const badge = document.getElementById('notif-badge');
+    const panel = document.getElementById('notif-dropdown-panel');
+    const listContainer = document.getElementById('notif-list-container');
+    const countLabel = document.getElementById('notif-count-label');
+
+    if (bellBtn && panel) {
+      bellBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!panel.contains(e.target) && !bellBtn.contains(e.target)) {
+          panel.classList.add('hidden');
+        }
+      });
+    }
+
+    async function loadNotifications() {
+      try {
+        const res = await fetch('/admin/api/notifications', {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.success && data.notifications) {
+          const unread = data.unreadCount || 0;
+          if (unread > 0) {
+            badge.textContent = unread;
+            badge.classList.remove('hidden');
+            countLabel.textContent = `${unread} Alerts`;
+          } else {
+            badge.classList.add('hidden');
+            countLabel.textContent = `0 Alerts`;
+          }
+
+          renderNotifList(data.notifications);
+        }
+      } catch (err) {
+        console.warn('[AdminHeader] Notifications load error:', err);
+      }
+    }
+
+    function renderNotifList(items) {
+      if (!listContainer) return;
+      if (!items || items.length === 0) {
+        listContainer.innerHTML = `
+          <div class="p-6 text-center text-slate-400">
+            <i data-lucide="check-circle-2" class="w-8 h-8 text-emerald-500/80 mx-auto mb-2"></i>
+            <p>All caught up! No active alerts.</p>
+          </div>`;
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'p-3.5 hover:bg-slate-800/60 transition-colors flex items-start gap-3 relative';
+        
+        let actionBtnHtml = '';
+        if (item.type === 'app_request') {
+          actionBtnHtml = `<button data-app="${item.app_name}" data-reqid="${item.raw_id}" class="auto-fulfill-btn mt-2 bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-1 rounded-md text-[10px] font-bold flex items-center gap-1 transition-all">
+            <i data-lucide="zap" class="w-3 h-3 fill-amber-300 text-amber-300"></i> Auto Publish
+          </button>`;
+        } else if (item.type === 'software_update') {
+          actionBtnHtml = `<button data-app="${item.app_name}" class="auto-check-update-btn mt-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-indigo-300 px-2.5 py-1 rounded-md text-[10px] font-bold flex items-center gap-1 transition-all">
+            <i data-lucide="refresh-cw" class="w-3 h-3 text-indigo-400"></i> Check Update
+          </button>`;
+        }
+
+        div.innerHTML = `
+          <div class="flex-grow min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[9px] font-bold border px-2 py-0.5 rounded-full uppercase ${item.badge_color}">${item.badge}</span>
+              <span class="text-[10px] text-slate-500">${new Date(item.created_at).toLocaleDateString()}</span>
+            </div>
+            <h5 class="font-bold text-white text-xs truncate">${item.title}</h5>
+            <p class="text-slate-400 text-[11px] mt-0.5 leading-relaxed">${item.message}</p>
+            ${actionBtnHtml}
+          </div>
+          <button data-id="${item.raw_id}" class="dismiss-notif-btn text-slate-500 hover:text-slate-300 p-1 rounded hover:bg-slate-800 transition-colors">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
+        `;
+
+        listContainer.appendChild(div);
+      });
+
+      if (window.lucide) lucide.createIcons();
+
+      // Bind Auto Fulfill Buttons
+      listContainer.querySelectorAll('.auto-fulfill-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const appName = btn.dataset.app;
+          const reqId = btn.dataset.reqid;
+          btn.disabled = true;
+          btn.textContent = 'Publishing...';
+          try {
+            const res = await fetch('/admin/api/notifications/fulfill-request', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ request_id: reqId, app_name: appName })
+            });
+            const result = await res.json();
+            if (result.success) {
+              alert(`🎉 Published "${appName}" successfully!`);
+              window.location.reload();
+            } else {
+              alert('Error: ' + result.error);
+            }
+          } catch (e) {
+            alert('Error fulfilling request: ' + e.message);
+          } finally {
+            btn.disabled = false;
+          }
+        });
+      });
+
+      // Bind Auto Check Update Buttons
+      listContainer.querySelectorAll('.auto-check-update-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const appName = btn.dataset.app;
+          const input = document.getElementById('auto-pub-name-input');
+          if (input) {
+            input.value = appName;
+            document.getElementById('auto-pub-search-btn')?.click();
+            panel.classList.add('hidden');
+          }
+        });
+      });
+
+      // Bind Dismiss Buttons
+      listContainer.querySelectorAll('.dismiss-notif-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const reqId = btn.dataset.id;
+          await fetch('/admin/api/notifications/dismiss', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ request_id: reqId })
+          });
+          loadNotifications();
+        });
+      });
+    }
+
+    loadNotifications();
+  })();
+</script>

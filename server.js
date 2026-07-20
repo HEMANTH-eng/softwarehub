@@ -121,6 +121,12 @@ app.use('/admin', adminRoutes);
 
 // Custom 404 Handler
 app.use((req, res) => {
+  if (req.originalUrl.includes('/admin/ai/') || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+    return res.status(404).json({
+      success: false,
+      error: 'API Endpoint not found.'
+    });
+  }
   const cfg = getConfig();
   res.status(404).render('404', {
     siteTitle: `Page Not Found - ${cfg.site.name || 'Software Hub'}`,
@@ -131,6 +137,12 @@ app.use((req, res) => {
 // --- Global Error Handler ---
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err.stack || err);
+  if (req.originalUrl.includes('/admin/ai/') || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+    return res.status(500).json({
+      success: false,
+      error: err.message || 'Internal Server Error'
+    });
+  }
   const cfg = getConfig();
   res.status(500).render('404', {
     siteTitle: `Server Error - ${cfg.site.name || 'Software Hub'}`,

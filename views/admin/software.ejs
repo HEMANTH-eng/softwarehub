@@ -13,49 +13,7 @@
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
   <!-- Admin Top Navigation -->
-  <header class="bg-slate-900 text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center space-x-3">
-          <div class="bg-blue-600 p-2 rounded-lg text-white">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
-          </div>
-          <span class="font-extrabold text-base tracking-tight"><%= config.site.name %> Admin Panel</span>
-          
-          <!-- Admin Platform Switcher (W & A) -->
-          <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700 ml-4 shrink-0">
-            <a 
-              href="/set-platform?platform=windows&redirect=<%= encodeURIComponent(currentUrl) %>" 
-              title="Switch to Windows View"
-              class="flex items-center justify-center w-7 h-7 rounded-md transition-all <%= (typeof platform !== 'undefined' && platform === 'windows') ? 'bg-slate-700 text-blue-400 shadow-sm' : 'text-slate-400 hover:text-slate-200' %>"
-            >
-              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 3.449L9.75 2.1v9.45H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.1zM11.25 1.899L24 0v11.55H11.25V1.899zM11.25 12.45H24v11.55l-12.75-1.9v-9.65z"/>
-              </svg>
-            </a>
-            <a 
-              href="/set-platform?platform=android&redirect=<%= encodeURIComponent(currentUrl) %>" 
-              title="Switch to Android View"
-              class="flex items-center justify-center w-7 h-7 rounded-md transition-all <%= (typeof platform !== 'undefined' && platform === 'android') ? 'bg-slate-700 text-green-400 shadow-sm' : 'text-slate-400 hover:text-slate-200' %>"
-            >
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.523 15.3414C17.523 15.9329 17.0427 16.4116 16.4526 16.4116C15.8624 16.4116 15.3822 15.9329 15.3822 15.3414C15.3822 14.7499 15.8624 14.2712 16.4526 14.2712C17.0427 14.2712 17.523 14.7499 17.523 15.3414ZM8.6178 15.3414C8.6178 15.9329 8.13756 16.4116 7.5474 16.4116C6.95724 16.4116 6.477 15.9329 6.477 15.3414C6.477 14.7499 6.95724 14.2712 7.5474 14.2712C8.13756 14.2712 8.6178 14.7499 8.6178 15.3414ZM17.9035 11.2683H6.09652C5.48512 11.2683 5 11.7547 5 12.3683V18.9959C5 19.6095 5.48512 20.0959 6.09652 20.0959H17.9035C18.5149 20.0959 19 19.6095 19 18.9959V12.3683C19 11.7547 18.5149 11.2683 17.9035 11.2683ZM16.8929 6.78659L18.4552 4.07317C18.5682 3.87683 18.4984 3.62683 18.3027 3.51341C18.107 3.40051 17.8576 3.47051 17.7447 3.66683L16.1472 6.43902C14.9351 5.88902 13.5358 5.57317 12 5.57317C10.4642 5.57317 9.06492 5.88902 7.85284 6.43902L6.25532 3.66683C6.14244 3.47051 5.893 3.40051 5.69732 3.51341C5.50164 3.62683 5.4318 3.87683 5.54476 4.07317L7.10712 6.78659C4.64652 8.09341 3 10.669 3 13.6341H21C21 10.669 19.3535 8.09341 16.8929 6.78659Z"/>
-            </svg>
-            <span class="sr-only">Android</span>
-          </a>
-        </div>
-
-        <div class="flex items-center space-x-4 text-sm font-medium">
-          <span class="text-slate-400">Welcome, <strong><%= adminUsername %></strong></span>
-          <div class="h-4 w-[1px] bg-slate-700"></div>
-          <a href="/" target="_blank" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors">
-            <span>View Site</span>
-            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </header>
+  <%- include('partials/admin_header') %>
 
   <!-- Navigation Tab Bar -->
   <div class="bg-white border-b border-slate-200">
@@ -92,6 +50,99 @@
   <!-- Main Body Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow space-y-6">
 
+    <!-- ⚡ ONE-CLICK AUTO PUBLISHER COMPONENT -->
+    <%- include('partials/auto_publisher_component') %>
+
+    <!-- AI Software Publisher Card -->
+    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 shadow-xl border border-indigo-800/50 text-white relative overflow-hidden">
+      <!-- Glow backdrop decoration -->
+      <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-10 -top-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex items-center justify-between border-b border-indigo-800/40 pb-4 mb-5">
+        <div class="flex items-center gap-3">
+          <div class="bg-gradient-to-br from-indigo-500 to-blue-600 p-2.5 rounded-xl text-white shadow-md shadow-indigo-500/30">
+            <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
+          </div>
+          <div>
+            <h2 class="text-base font-extrabold tracking-wide flex items-center gap-2">
+              <span>AI Software Publisher</span>
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2.5 py-0.5 rounded-full">Auto Meta & Media</span>
+            </h2>
+            <p class="text-xs text-indigo-200/80 mt-0.5">Enter a Software Name, Website URL, or Upload an Installer file to automatically generate full details, SEO tags, logos & screenshots.</p>
+          </div>
+        </div>
+      </div>
+
+      <form id="ai-generator-form" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <!-- Option 1: Software Name -->
+          <div class="space-y-1.5">
+            <label for="ai-sw-name" class="text-xs font-bold text-indigo-200 flex items-center gap-1">
+              <i data-lucide="type" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>1. Software Name</span>
+            </label>
+            <input 
+              type="text" 
+              id="ai-sw-name" 
+              placeholder="e.g. Google Chrome, VLC Media Player" 
+              class="w-full bg-slate-800/80 border border-indigo-700/50 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
+            >
+          </div>
+
+          <!-- Option 2: Website URL -->
+          <div class="space-y-1.5">
+            <label for="ai-sw-url" class="text-xs font-bold text-indigo-200 flex items-center gap-1">
+              <i data-lucide="globe" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>OR 2. Official Website URL</span>
+            </label>
+            <input 
+              type="url" 
+              id="ai-sw-url" 
+              placeholder="https://www.google.com/chrome/" 
+              class="w-full bg-slate-800/80 border border-indigo-700/50 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
+            >
+          </div>
+
+          <!-- Option 3: Upload Installer -->
+          <div class="space-y-1.5">
+            <label for="ai-sw-installer" class="text-xs font-bold text-indigo-200 flex items-center gap-1">
+              <i data-lucide="file-up" class="w-3.5 h-3.5 text-indigo-400"></i>
+              <span>OR 3. Upload Installer</span>
+            </label>
+            <input 
+              type="file" 
+              id="ai-sw-installer" 
+              accept=".exe,.msi,.zip" 
+              class="w-full text-xs text-indigo-200 bg-slate-800/80 border border-indigo-700/50 rounded-xl px-3 py-1.5 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer"
+            >
+          </div>
+
+        </div>
+
+        <!-- Notification Banner -->
+        <div id="ai-alert" class="hidden p-3 rounded-xl text-xs font-medium border"></div>
+
+        <!-- Action Bar & Progress -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+          <div id="ai-status-container" class="hidden flex items-center gap-3 text-xs text-indigo-200">
+            <div class="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+            <span id="ai-status-text" class="font-medium">AI Service analyzing software...</span>
+          </div>
+
+          <button 
+            type="submit" 
+            id="ai-generate-btn" 
+            class="w-full sm:w-auto ml-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2 focus:outline-none"
+          >
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>✨ Generate Details</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
     <!-- Action Header -->
     <div class="flex items-center justify-between border-b border-slate-200 pb-4">
       <div>
@@ -103,7 +154,7 @@
         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-lg shadow transition-all flex items-center gap-1.5 focus:outline-none"
       >
         <i data-lucide="plus" class="w-4 h-4"></i>
-        <span>Add Software</span>
+        <span>Add Software Manually</span>
       </button>
     </div>
 
@@ -210,6 +261,25 @@
                         data-featured="<%= sw.is_featured %>"
                         data-new="<%= sw.is_new %>"
                         data-platform="<%= sw.platform || 'windows' %>"
+                        data-developer="<%= sw.developer || '' %>"
+                        data-publisher="<%= sw.publisher || '' %>"
+                        data-license="<%= sw.license || '' %>"
+                        data-os="<%= sw.operating_systems || '' %>"
+                        data-architecture="<%= sw.architecture || '' %>"
+                        data-sysreq="<%= sw.system_requirements || '' %>"
+                        data-guide="<%= sw.installation_guide || '' %>"
+                        data-features="<%= sw.features || '' %>"
+                        data-changelog="<%= sw.changelog || '' %>"
+                        data-pros="<%= sw.pros || '' %>"
+                        data-cons="<%= sw.cons || '' %>"
+                        data-tags="<%= sw.tags || '' %>"
+                        data-seotitle="<%= sw.seo_title || '' %>"
+                        data-seodesc="<%= sw.seo_meta_description || '' %>"
+                        data-seokeywords="<%= sw.seo_keywords || '' %>"
+                        data-faq="<%= sw.faq || '' %>"
+                        data-recs="<%= sw.recommended_software || '' %>"
+                        data-icon="<%= sw.icon_image || '' %>"
+                        data-filepath="<%= sw.file_path || '' %>"
                       >
                         <i data-lucide="edit-3" class="w-4 h-4"></i>
                       </button>
@@ -227,7 +297,7 @@
               <% }); %>
             <% } else { %>
               <tr>
-                <td colspan="6" class="p-8 text-center text-slate-400">
+                <td colspan="7" class="p-8 text-center text-slate-400">
                   <i data-lucide="package-open" class="w-10 h-10 text-slate-300 mx-auto mb-2"></i>
                   <p class="font-semibold">No software listings added yet.</p>
                 </td>
@@ -247,138 +317,368 @@
     
     <!-- Modal container -->
     <div class="flex min-h-full items-center justify-center p-4 text-center">
-      <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-2xl border border-slate-100 p-6 sm:p-8">
+      <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-4xl border border-slate-100 p-6 sm:p-8">
         
         <!-- Modal Close Button -->
         <button id="close-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
 
-        <!-- Form Title -->
-        <h3 class="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-3 mb-6" id="modal-title">
-          Add New Software Listing
-        </h3>
+        <!-- Form Title & AI Badge -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-6">
+          <h3 class="text-base font-bold text-slate-900 uppercase tracking-wider" id="modal-title">
+            Add New Software Listing
+          </h3>
+          <span id="ai-filled-badge" class="hidden text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-1 rounded-full font-semibold flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-500"></i>
+            <span>Populated by AI Publisher</span>
+          </span>
+        </div>
 
         <!-- Form Body -->
-        <form id="software-form" action="/admin/software/add" method="POST" enctype="multipart/form-data" class="space-y-5">
+        <form id="software-form" action="/admin/software/add" method="POST" enctype="multipart/form-data" class="space-y-6">
           
-          <!-- Name, Category & Platform -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="space-y-1">
-              <label for="sw-name" class="text-xs font-bold text-slate-500">Software Name *</label>
-              <input 
-                type="text" 
-                name="name" 
-                id="sw-name" 
-                required 
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              >
-            </div>
+          <!-- Hidden Inputs for AI Generated file references -->
+          <input type="hidden" name="existing_icon_image" id="sw-existing-icon" value="">
+          <input type="hidden" name="existing_file_path" id="sw-existing-file" value="">
+          <input type="hidden" name="screenshots" id="sw-screenshots" value="[]">
+
+          <!-- Section 1: Basic Information -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">1. Basic Information</h4>
             
-            <div class="space-y-1">
-              <label for="sw-category" class="text-xs font-bold text-slate-500">Category *</label>
-              <select 
-                name="category_id" 
-                id="sw-category" 
-                required 
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              >
-                <option value="">Select Category</option>
-                <% categories.forEach(function(cat) { %>
-                  <option value="<%= cat.id %>"><%= cat.name %></option>
-                <% }); %>
-              </select>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="space-y-1">
+                <label for="sw-name" class="text-xs font-bold text-slate-500">Software Name *</label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  id="sw-name" 
+                  required 
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+              
+              <div class="space-y-1">
+                <label for="sw-category" class="text-xs font-bold text-slate-500">Category *</label>
+                <select 
+                  name="category_id" 
+                  id="sw-category" 
+                  required 
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="">Select Category</option>
+                  <% categories.forEach(function(cat) { %>
+                    <option value="<%= cat.id %>"><%= cat.name %></option>
+                  <% }); %>
+                </select>
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-platform" class="text-xs font-bold text-slate-500">Platform *</label>
+                <select 
+                  name="platform" 
+                  id="sw-platform" 
+                  required 
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="windows">Windows</option>
+                  <option value="android">Android</option>
+                </select>
+              </div>
             </div>
 
-            <div class="space-y-1">
-              <label for="sw-platform" class="text-xs font-bold text-slate-500">Platform *</label>
-              <select 
-                name="platform" 
-                id="sw-platform" 
-                required 
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              >
-                <option value="windows">Windows</option>
-                <option value="android">Android</option>
-              </select>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div class="space-y-1">
+                <label for="sw-version" class="text-xs font-bold text-slate-500">Version (e.g., 3.0.2)</label>
+                <input 
+                  type="text" 
+                  name="version" 
+                  id="sw-version" 
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+              
+              <div class="space-y-1">
+                <label for="sw-size" class="text-xs font-bold text-slate-500">File Size *</label>
+                <input 
+                  type="text" 
+                  name="size" 
+                  id="sw-size" 
+                  required
+                  placeholder="e.g., 45.2 MB"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-developer" class="text-xs font-bold text-slate-500">Developer</label>
+                <input 
+                  type="text" 
+                  name="developer" 
+                  id="sw-developer" 
+                  placeholder="Google LLC"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-publisher" class="text-xs font-bold text-slate-500">Publisher</label>
+                <input 
+                  type="text" 
+                  name="publisher" 
+                  id="sw-publisher" 
+                  placeholder="Google"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="space-y-1">
+                <label for="sw-license" class="text-xs font-bold text-slate-500">License</label>
+                <input 
+                  type="text" 
+                  name="license" 
+                  id="sw-license" 
+                  placeholder="Freeware / Open Source"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-architecture" class="text-xs font-bold text-slate-500">Architecture</label>
+                <input 
+                  type="text" 
+                  name="architecture" 
+                  id="sw-architecture" 
+                  placeholder="64-bit (x64), 32-bit (x86)"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-os" class="text-xs font-bold text-slate-500">Supported OS</label>
+                <input 
+                  type="text" 
+                  name="operating_systems" 
+                  id="sw-os" 
+                  placeholder="Windows 11, 10, 8.1, 7"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                >
+              </div>
             </div>
           </div>
 
-          <!-- Version & Size -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="space-y-1">
-              <label for="sw-version" class="text-xs font-bold text-slate-500">Version (e.g., 3.0.2)</label>
-              <input 
-                type="text" 
-                name="version" 
-                id="sw-version" 
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              >
-            </div>
+          <!-- Section 2: Descriptions -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">2. Descriptions & Details</h4>
             
             <div class="space-y-1">
-              <label for="sw-size" class="text-xs font-bold text-slate-500">File Size (e.g., 45 MB) *</label>
+              <label for="sw-short-desc" class="text-xs font-bold text-slate-500">Short Description (Max 150 chars) *</label>
               <input 
                 type="text" 
-                name="size" 
-                id="sw-size" 
+                name="short_description" 
+                id="sw-short-desc" 
                 required
+                maxlength="150"
                 class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               >
             </div>
-          </div>
 
-          <!-- Short Description -->
-          <div class="space-y-1">
-            <label for="sw-short-desc" class="text-xs font-bold text-slate-500">Short Description (Max 150 chars) *</label>
-            <input 
-              type="text" 
-              name="short_description" 
-              id="sw-short-desc" 
-              required
-              maxlength="150"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-            >
-          </div>
-
-          <!-- Full Description -->
-          <div class="space-y-1">
-            <label for="sw-full-desc" class="text-xs font-bold text-slate-500">Full Description</label>
-            <textarea 
-              name="full_description" 
-              id="sw-full-desc" 
-              rows="4" 
-              class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-            ></textarea>
-          </div>
-
-          <!-- File Uploads -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-1">
-              <label for="sw-icon" class="text-xs font-bold text-slate-500 block">Thumbnail Icon (Image file)</label>
-              <input 
-                type="file" 
-                name="icon_image" 
-                id="sw-icon" 
-                accept="image/*"
-                class="w-full text-xs text-slate-500 border border-slate-200 rounded-lg px-3 py-1.5"
-              >
+              <label for="sw-full-desc" class="text-xs font-bold text-slate-500">Full Overview Description</label>
+              <textarea 
+                name="full_description" 
+                id="sw-full-desc" 
+                rows="4" 
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              ></textarea>
             </div>
+          </div>
+
+          <!-- Section 3: Technical Specs & Guides -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">3. Specifications, Guides & Features</h4>
             
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label for="sw-sysreq" class="text-xs font-bold text-slate-500">System Requirements</label>
+                <textarea 
+                  name="system_requirements" 
+                  id="sw-sysreq" 
+                  rows="3" 
+                  placeholder="RAM: 2GB, CPU: 1.5GHz, Storage: 200MB"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                ></textarea>
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-guide" class="text-xs font-bold text-slate-500">Installation Guide</label>
+                <textarea 
+                  name="installation_guide" 
+                  id="sw-guide" 
+                  rows="3" 
+                  placeholder="1. Download installer file&#10;2. Run setup executable&#10;3. Follow onscreen instructions"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label for="sw-features" class="text-xs font-bold text-slate-500">Key Features (One per line)</label>
+                <textarea 
+                  name="features" 
+                  id="sw-features" 
+                  rows="3" 
+                  placeholder="Fast page rendering&#10;Built-in security protection&#10;Tab sync"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                ></textarea>
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-changelog" class="text-xs font-bold text-slate-500">Changelog Summary</label>
+                <textarea 
+                  name="changelog" 
+                  id="sw-changelog" 
+                  rows="3" 
+                  placeholder="Summary of latest updates & stability fixes."
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="space-y-1">
+                <label for="sw-pros" class="text-xs font-bold text-slate-500">Pros (One per line)</label>
+                <textarea 
+                  name="pros" 
+                  id="sw-pros" 
+                  rows="2" 
+                  placeholder="Fast speed&#10;Easy interface"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                ></textarea>
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-cons" class="text-xs font-bold text-slate-500">Cons (One per line)</label>
+                <textarea 
+                  name="cons" 
+                  id="sw-cons" 
+                  rows="2" 
+                  placeholder="High memory usage"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                ></textarea>
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-tags" class="text-xs font-bold text-slate-500">Tags (Comma-separated)</label>
+                <textarea 
+                  name="tags" 
+                  id="sw-tags" 
+                  rows="2" 
+                  placeholder="browser, google, web, fast"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: SEO Optimization -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">4. SEO Optimization</h4>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label for="sw-seotitle" class="text-xs font-bold text-slate-500">SEO Title</label>
+                <input 
+                  type="text" 
+                  name="seo_title" 
+                  id="sw-seotitle" 
+                  placeholder="Download Google Chrome for Windows PC"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+
+              <div class="space-y-1">
+                <label for="sw-seokeywords" class="text-xs font-bold text-slate-500">SEO Keywords</label>
+                <input 
+                  type="text" 
+                  name="seo_keywords" 
+                  id="sw-seokeywords" 
+                  placeholder="chrome, download chrome, chrome windows"
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                >
+              </div>
+            </div>
+
             <div class="space-y-1">
-              <label for="sw-file" class="text-xs font-bold text-slate-500 block">Installer Package file *</label>
-              <input 
-                type="file" 
-                name="software_file" 
-                id="sw-file" 
-                class="w-full text-xs text-slate-500 border border-slate-200 rounded-lg px-3 py-1.5"
-              >
-              <span id="file-helper-text" class="text-[9px] text-slate-400 block mt-0.5">Select a file from your device. Required when creating new.</span>
+              <label for="sw-seodesc" class="text-xs font-bold text-slate-500">SEO Meta Description</label>
+              <textarea 
+                name="seo_meta_description" 
+                id="sw-seodesc" 
+                rows="2" 
+                placeholder="Download Google Chrome for Windows free. Safe download with full guide and features."
+                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Section 5: Files & Media -->
+          <div class="space-y-4">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-1">5. File & Image Attachments</h4>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              
+              <!-- Icon Image -->
+              <div class="space-y-2 border border-slate-100 p-3 rounded-xl bg-slate-50/50">
+                <label for="sw-icon" class="text-xs font-bold text-slate-500 block">Software Logo / Icon</label>
+                
+                <div id="icon-preview-box" class="hidden flex items-center gap-3 bg-white p-2 rounded-lg border border-slate-200">
+                  <img id="icon-preview-img" src="" alt="Icon Preview" class="w-10 h-10 object-cover rounded-md border">
+                  <div>
+                    <span id="icon-preview-name" class="text-xs font-bold text-slate-700 block truncate max-w-[180px]">icon.png</span>
+                    <span id="icon-preview-status" class="text-[10px] text-emerald-600 font-semibold block">Fetched by AI</span>
+                  </div>
+                </div>
+
+                <input 
+                  type="file" 
+                  name="icon_image" 
+                  id="sw-icon" 
+                  accept="image/*"
+                  class="w-full text-xs text-slate-500 border border-slate-200 rounded-lg px-3 py-1.5 bg-white"
+                >
+                <span class="text-[10px] text-slate-400 block">Or select an image file manually.</span>
+              </div>
+              
+              <!-- Installer File -->
+              <div class="space-y-2 border border-slate-100 p-3 rounded-xl bg-slate-50/50">
+                <label for="sw-file" class="text-xs font-bold text-slate-500 block">Installer Package file *</label>
+
+                <div id="file-preview-box" class="hidden flex items-center gap-3 bg-white p-2 rounded-lg border border-slate-200">
+                  <i data-lucide="file-check" class="w-8 h-8 text-blue-600 shrink-0"></i>
+                  <div>
+                    <span id="file-preview-name" class="text-xs font-bold text-slate-700 block truncate max-w-[180px]">setup.exe</span>
+                    <span id="file-preview-status" class="text-[10px] text-emerald-600 font-semibold block">Package file ready</span>
+                  </div>
+                </div>
+
+                <input 
+                  type="file" 
+                  name="software_file" 
+                  id="sw-file" 
+                  class="w-full text-xs text-slate-500 border border-slate-200 rounded-lg px-3 py-1.5 bg-white"
+                >
+                <span id="file-helper-text" class="text-[10px] text-slate-400 block">Select binary file. Required when creating new listing.</span>
+              </div>
+
             </div>
           </div>
 
           <!-- Listing Badges Toggle -->
-          <div class="flex items-center gap-6 py-2 border-t border-b border-slate-100">
+          <div class="flex items-center gap-6 py-3 border-t border-b border-slate-100">
             <label class="inline-flex items-center text-xs font-bold text-slate-600 gap-2 cursor-pointer">
               <input type="checkbox" name="is_featured" id="sw-featured" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
               <span>Mark as Featured (Carousels list)</span>
@@ -391,7 +691,7 @@
           </div>
 
           <!-- Form submit/actions buttons -->
-          <div class="flex justify-end gap-3 pt-3">
+          <div class="flex justify-end gap-3 pt-2">
             <button 
               type="button" 
               id="cancel-modal-btn" 
@@ -401,9 +701,10 @@
             </button>
             <button 
               type="submit" 
-              class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow transition-all focus:outline-none"
+              class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-md transition-all focus:outline-none flex items-center gap-1.5"
             >
-              Save Listing
+              <i data-lucide="check" class="w-4 h-4"></i>
+              <span>Save Software Listing</span>
             </button>
           </div>
 
@@ -416,30 +717,63 @@
   <!-- Admin Panel Footer -->
   <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12 shrink-0">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <span><%= config.site.name %> Admin Panel Panel Dashboard</span>
+      <span><%= config.site.name %> Admin Control Panel</span>
     </div>
   </footer>
 
   <script src="/js/main.js"></script>
 
-  <!-- Interactive Modal Script JS -->
+  <!-- Interactive AI Publisher & Modal Script JS -->
   <script>
     const modal = document.getElementById('software-modal');
     const modalTitle = document.getElementById('modal-title');
     const softwareForm = document.getElementById('software-form');
     const swFile = document.getElementById('sw-file');
     const fileHelperText = document.getElementById('file-helper-text');
+    const aiFilledBadge = document.getElementById('ai-filled-badge');
     
+    // Hidden inputs
+    const swExistingIcon = document.getElementById('sw-existing-icon');
+    const swExistingFile = document.getElementById('sw-existing-file');
+    const swScreenshots = document.getElementById('sw-screenshots');
+
     // Form Inputs
     const swName = document.getElementById('sw-name');
     const swCategory = document.getElementById('sw-category');
     const swPlatform = document.getElementById('sw-platform');
     const swVersion = document.getElementById('sw-version');
     const swSize = document.getElementById('sw-size');
+    const swDeveloper = document.getElementById('sw-developer');
+    const swPublisher = document.getElementById('sw-publisher');
+    const swLicense = document.getElementById('sw-license');
+    const swArchitecture = document.getElementById('sw-architecture');
+    const swOs = document.getElementById('sw-os');
+
     const swShortDesc = document.getElementById('sw-short-desc');
     const swFullDesc = document.getElementById('sw-full-desc');
+
+    const swSysreq = document.getElementById('sw-sysreq');
+    const swGuide = document.getElementById('sw-guide');
+    const swFeatures = document.getElementById('sw-features');
+    const swChangelog = document.getElementById('sw-changelog');
+    const swPros = document.getElementById('sw-pros');
+    const swCons = document.getElementById('sw-cons');
+    const swTags = document.getElementById('sw-tags');
+
+    const swSeoTitle = document.getElementById('sw-seotitle');
+    const swSeoDesc = document.getElementById('sw-seodesc');
+    const swSeoKeywords = document.getElementById('sw-seokeywords');
+
     const swFeatured = document.getElementById('sw-featured');
     const swNew = document.getElementById('sw-new');
+
+    // Previews
+    const iconPreviewBox = document.getElementById('icon-preview-box');
+    const iconPreviewImg = document.getElementById('icon-preview-img');
+    const iconPreviewName = document.getElementById('icon-preview-name');
+    
+    const filePreviewBox = document.getElementById('file-preview-box');
+    const filePreviewName = document.getElementById('file-preview-name');
 
     // Show Modal
     const showModal = (isEdit = false, editId = null) => {
@@ -449,19 +783,15 @@
       if (isEdit) {
         modalTitle.textContent = 'Edit Software Listing';
         softwareForm.action = '/admin/software/edit/' + editId;
-        // Make installer file optional for updates
         swFile.removeAttribute('required');
         fileHelperText.textContent = 'Leave empty to keep current installer package.';
       } else {
         modalTitle.textContent = 'Add New Software Listing';
         softwareForm.action = '/admin/software/add';
-        // Make installer file required for creation
-        swFile.setAttribute('required', 'required');
-        fileHelperText.textContent = 'Select the installer file. Required.';
-        
-        // Reset all inputs
-        softwareForm.reset();
-        swPlatform.value = '<%= typeof platform !== "undefined" ? platform : "windows" %>';
+        if (!swExistingFile.value) {
+          swFile.setAttribute('required', 'required');
+          fileHelperText.textContent = 'Select installer file. Required.';
+        }
       }
     };
 
@@ -469,11 +799,20 @@
     const closeModal = () => {
       modal.classList.add('hidden');
       document.body.classList.remove('overflow-hidden');
-      softwareForm.reset();
+      aiFilledBadge.classList.add('hidden');
     };
 
     // Listeners
-    document.getElementById('add-software-btn').addEventListener('click', () => showModal(false));
+    document.getElementById('add-software-btn').addEventListener('click', () => {
+      softwareForm.reset();
+      swExistingIcon.value = '';
+      swExistingFile.value = '';
+      iconPreviewBox.classList.add('hidden');
+      filePreviewBox.classList.add('hidden');
+      swPlatform.value = '<%= typeof platform !== "undefined" ? platform : "windows" %>';
+      showModal(false);
+    });
+
     document.getElementById('close-modal-btn').addEventListener('click', closeModal);
     document.getElementById('cancel-modal-btn').addEventListener('click', closeModal);
     document.getElementById('modal-backdrop').addEventListener('click', closeModal);
@@ -483,20 +822,258 @@
       btn.addEventListener('click', () => {
         const id = btn.dataset.id;
         
-        // Set values
-        swName.value = btn.dataset.name;
-        swCategory.value = btn.dataset.category;
+        swName.value = btn.dataset.name || '';
+        swCategory.value = btn.dataset.category || '';
         swPlatform.value = btn.dataset.platform || 'windows';
-        swVersion.value = btn.dataset.version;
-        swSize.value = btn.dataset.size;
-        swShortDesc.value = btn.dataset.shortDesc;
-        swFullDesc.value = btn.dataset.fullDesc;
+        swVersion.value = btn.dataset.version || '';
+        swSize.value = btn.dataset.size || '';
+        swShortDesc.value = btn.dataset.shortDesc || '';
+        swFullDesc.value = btn.dataset.fullDesc || '';
+
+        swDeveloper.value = btn.dataset.developer || '';
+        swPublisher.value = btn.dataset.publisher || '';
+        swLicense.value = btn.dataset.license || '';
+        swOs.value = btn.dataset.os || '';
+        swArchitecture.value = btn.dataset.architecture || '';
+
+        swSysreq.value = btn.dataset.sysreq || '';
+        swGuide.value = btn.dataset.guide || '';
+        
+        try {
+          const fArr = JSON.parse(btn.dataset.features);
+          swFeatures.value = Array.isArray(fArr) ? fArr.join('\n') : btn.dataset.features;
+        } catch(e) { swFeatures.value = btn.dataset.features || ''; }
+
+        swChangelog.value = btn.dataset.changelog || '';
+
+        try {
+          const pArr = JSON.parse(btn.dataset.pros);
+          swPros.value = Array.isArray(pArr) ? pArr.join('\n') : btn.dataset.pros;
+        } catch(e) { swPros.value = btn.dataset.pros || ''; }
+
+        try {
+          const cArr = JSON.parse(btn.dataset.cons);
+          swCons.value = Array.isArray(cArr) ? cArr.join('\n') : btn.dataset.cons;
+        } catch(e) { swCons.value = btn.dataset.cons || ''; }
+
+        swTags.value = btn.dataset.tags || '';
+
+        swSeoTitle.value = btn.dataset.seotitle || '';
+        swSeoDesc.value = btn.dataset.seodesc || '';
+        swSeoKeywords.value = btn.dataset.seokeywords || '';
+
         swFeatured.checked = btn.dataset.featured === '1';
         swNew.checked = btn.dataset.new === '1';
-        
+
+        swExistingIcon.value = btn.dataset.icon || '';
+        swExistingFile.value = btn.dataset.filepath || '';
+
+        if (btn.dataset.icon) {
+          iconPreviewImg.src = '/storage/images/' + btn.dataset.icon;
+          iconPreviewName.textContent = btn.dataset.icon;
+          iconPreviewBox.classList.remove('hidden');
+        } else {
+          iconPreviewBox.classList.add('hidden');
+        }
+
+        if (btn.dataset.filepath) {
+          filePreviewName.textContent = btn.dataset.filepath;
+          filePreviewBox.classList.remove('hidden');
+        } else {
+          filePreviewBox.classList.add('hidden');
+        }
+
         showModal(true, id);
       });
     });
+
+    // --- AI SOFTWARE PUBLISHER CLIENT JS ---
+    const aiForm = document.getElementById('ai-generator-form');
+    const aiSwName = document.getElementById('ai-sw-name');
+    const aiSwUrl = document.getElementById('ai-sw-url');
+    const aiSwInstaller = document.getElementById('ai-sw-installer');
+    const aiGenerateBtn = document.getElementById('ai-generate-btn');
+    const aiStatusContainer = document.getElementById('ai-status-container');
+    const aiStatusText = document.getElementById('ai-status-text');
+    const aiAlert = document.getElementById('ai-alert');
+
+    aiForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const nameVal = aiSwName.value.trim();
+      const urlVal = aiSwUrl.value.trim();
+      const installerFile = aiSwInstaller.files[0];
+
+      if (!nameVal && !urlVal && !installerFile) {
+        showAlert('Please enter a Software Name, Website URL, or select an Installer file to generate details.', 'error');
+        return;
+      }
+
+      // Hide alert & show loading
+      aiAlert.classList.add('hidden');
+      aiStatusContainer.classList.remove('hidden');
+      aiGenerateBtn.disabled = true;
+      aiGenerateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      const statusMessages = [
+        'Analyzing software details...',
+        'Scraping official website & metadata...',
+        'Synthesizing features, system requirements & guides...',
+        'Downloading official logo, icons & screenshots...',
+        'Structuring JSON response...'
+      ];
+
+      let msgIndex = 0;
+      const statusInterval = setInterval(() => {
+        msgIndex = (msgIndex + 1) % statusMessages.length;
+        aiStatusText.textContent = statusMessages[msgIndex];
+      }, 2500);
+
+      try {
+        const formData = new FormData();
+        if (nameVal) formData.append('software_name', nameVal);
+        if (urlVal) formData.append('website_url', urlVal);
+        if (installerFile) formData.append('installer_file', installerFile);
+
+        const response = await fetch('/admin/ai/generate', {
+          method: 'POST',
+          body: formData
+        });
+
+        clearInterval(statusInterval);
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Failed to generate software details.');
+        }
+
+        const data = result.data;
+
+        // Auto Populate Form Fields
+        swName.value = data.name || nameVal || '';
+        if (data.category_id) swCategory.value = data.category_id;
+        swPlatform.value = (data.operating_systems && data.operating_systems.toLowerCase().includes('android')) ? 'android' : 'windows';
+        swVersion.value = data.version || '';
+        swSize.value = data.size || data.file_size || '';
+
+        swDeveloper.value = data.developer || '';
+        swPublisher.value = data.publisher || '';
+        swLicense.value = data.license || '';
+        swArchitecture.value = data.architecture || '';
+        swOs.value = data.operating_systems || '';
+
+        swShortDesc.value = data.short_description || '';
+        swFullDesc.value = data.full_description || '';
+
+        swSysreq.value = data.system_requirements || '';
+        swGuide.value = data.installation_guide || '';
+        swFeatures.value = Array.isArray(data.features) ? data.features.join('\n') : (data.features || '');
+        swChangelog.value = data.changelog || '';
+        swPros.value = Array.isArray(data.pros) ? data.pros.join('\n') : (data.pros || '');
+        swCons.value = Array.isArray(data.cons) ? data.cons.join('\n') : (data.cons || '');
+        swTags.value = data.tags || '';
+
+        swSeoTitle.value = data.seo_title || '';
+        swSeoDesc.value = data.seo_meta_description || '';
+        swSeoKeywords.value = data.seo_keywords || '';
+
+        // Media & Files
+        if (data.icon_image) {
+          swExistingIcon.value = data.icon_image;
+          iconPreviewImg.src = '/storage/images/' + data.icon_image;
+          iconPreviewName.textContent = data.icon_image;
+          iconPreviewBox.classList.remove('hidden');
+        }
+
+        if (data.file_path) {
+          swExistingFile.value = data.file_path;
+          filePreviewName.textContent = data.file_path;
+          filePreviewBox.classList.remove('hidden');
+          swFile.removeAttribute('required');
+          fileHelperText.textContent = 'Package file uploaded during AI analysis is selected.';
+        }
+
+        if (data.screenshots) {
+          swScreenshots.value = typeof data.screenshots === 'string' ? data.screenshots : JSON.stringify(data.screenshots);
+        }
+
+        // Show AI badge & open modal
+        aiFilledBadge.classList.remove('hidden');
+        showModal(false);
+        showAlert('✨ AI Details generated successfully! Review and click Save Listing when ready.', 'success');
+
+      } catch (err) {
+        console.error('AI Generation error:', err);
+        showAlert(err.message || 'An error occurred while contacting AI service. Please try again.', 'error');
+      } finally {
+        clearInterval(statusInterval);
+        aiStatusContainer.classList.add('hidden');
+        aiGenerateBtn.disabled = false;
+        aiGenerateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    });
+
+    function showAlert(msg, type = 'info') {
+      aiAlert.classList.remove('hidden', 'bg-red-900/40', 'border-red-700/50', 'text-red-200', 'bg-emerald-900/40', 'border-emerald-700/50', 'text-emerald-200');
+      if (type === 'error') {
+        aiAlert.classList.add('bg-red-900/40', 'border-red-700/50', 'text-red-200');
+      } else {
+        aiAlert.classList.add('bg-emerald-900/40', 'border-emerald-700/50', 'text-emerald-200');
+      }
+      aiAlert.textContent = msg;
+    }
+
+    // Expose auto payload populator to window for One-Click Auto Publisher "Customize & Edit"
+    window.populateFullEditorFromAutoPayload = function(data) {
+      swName.value = data.name || '';
+      if (data.category_id) swCategory.value = data.category_id;
+      swPlatform.value = (data.operating_systems && data.operating_systems.toLowerCase().includes('android')) ? 'android' : 'windows';
+      swVersion.value = data.version || '';
+      swSize.value = data.size || '';
+
+      swDeveloper.value = data.developer || '';
+      swPublisher.value = data.publisher || '';
+      swLicense.value = data.license || '';
+      swArchitecture.value = data.architecture || '';
+      swOs.value = data.operating_systems || '';
+
+      swShortDesc.value = data.short_description || '';
+      swFullDesc.value = data.full_description || '';
+
+      swSysreq.value = data.system_requirements || '';
+      swGuide.value = data.installation_guide || '';
+      swFeatures.value = Array.isArray(data.features) ? data.features.join('\n') : (data.features || '');
+      swChangelog.value = data.changelog || '';
+      swPros.value = Array.isArray(data.pros) ? data.pros.join('\n') : (data.pros || '');
+      swCons.value = Array.isArray(data.cons) ? data.cons.join('\n') : (data.cons || '');
+      swTags.value = data.tags || '';
+
+      swSeoTitle.value = data.seo_title || '';
+      swSeoDesc.value = data.seo_meta_description || '';
+      swSeoKeywords.value = data.seo_keywords || '';
+
+      if (data.icon_image) {
+        swExistingIcon.value = data.icon_image;
+        iconPreviewImg.src = '/storage/images/' + data.icon_image;
+        iconPreviewName.textContent = data.icon_image;
+        iconPreviewBox.classList.remove('hidden');
+      }
+
+      if (data.file_path) {
+        swExistingFile.value = data.file_path;
+        filePreviewName.textContent = data.file_path;
+        filePreviewBox.classList.remove('hidden');
+        swFile.removeAttribute('required');
+      }
+
+      if (data.screenshots) {
+        swScreenshots.value = typeof data.screenshots === 'string' ? data.screenshots : JSON.stringify(data.screenshots);
+      }
+
+      aiFilledBadge.classList.remove('hidden');
+      showModal(false);
+    };
   </script>
 </body>
 </html>
