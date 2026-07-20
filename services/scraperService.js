@@ -200,5 +200,6 @@ function resolveUrl(relative, base) {
 }
 
 module.exports = {
-  scrapeWebsite
+  scrapeWebsite,
+  scrapeWebsiteMetadata: scrapeWebsite
 };

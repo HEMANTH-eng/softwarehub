@@ -65,20 +65,16 @@ async function publishDirectly(req, res) {
       });
     }
 
-    // Handle installer file: if empty, create software binary installer stub in storage/software/
+    // Handle installer file: download or generate installer binary package in storage/software/
     let softwareFilePath = p.file_path || '';
     if (!softwareFilePath) {
-      const softwareStorageDir = path.resolve(__dirname, '../storage/software');
-      if (!fs.existsSync(softwareStorageDir)) {
-        fs.mkdirSync(softwareStorageDir, { recursive: true });
-      }
-
-      const slug = p.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/\-+/g, '-');
-      softwareFilePath = `${slug}-installer-${Date.now()}.exe`;
-      const fullPath = path.join(softwareStorageDir, softwareFilePath);
-
-      // Create installer package file stub
-      fs.writeFileSync(fullPath, `Software Hub Pro Installer Binary for ${p.name} v${p.version || '1.0.0'}\nOfficial Download Source: ${p.official_download_url || p.website_url || 'https://softwarehubpro.com'}\nCreated at ${new Date().toISOString()}`);
+      const { ensureSoftwareInstallerFile } = require('../services/packageDownloaderService');
+      softwareFilePath = await ensureSoftwareInstallerFile({
+        softwareName: p.name,
+        downloadUrl: p.download_url || p.official_download_url || p.website_url || p.official_url,
+        platform: p.platform || 'windows',
+        version: p.version || '1.0.0'
+      });
     }
 
     // Insert into SQLite software table

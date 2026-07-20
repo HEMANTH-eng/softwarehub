@@ -112,16 +112,16 @@ async function saveDraft(req, res) {
       });
     }
 
-    // Handle installer stub
+    // Handle installer file: download or generate installer binary package in storage/software/
     let softwareFilePath = p.file_path || '';
     if (!softwareFilePath) {
-      const softwareStorageDir = path.resolve(__dirname, '../storage/software');
-      if (!fs.existsSync(softwareStorageDir)) {
-        fs.mkdirSync(softwareStorageDir, { recursive: true });
-      }
-      const slug = p.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/\-+/g, '-');
-      softwareFilePath = `${slug}-draft-installer-${Date.now()}.exe`;
-      fs.writeFileSync(path.join(softwareStorageDir, softwareFilePath), `Draft Installer Stub for ${p.name}`);
+      const { ensureSoftwareInstallerFile } = require('../services/packageDownloaderService');
+      softwareFilePath = await ensureSoftwareInstallerFile({
+        softwareName: p.name,
+        downloadUrl: p.download_url || p.official_url || p.github_url || p.official_website,
+        platform: p.platform || 'windows',
+        version: p.version || '1.0.0'
+      });
     }
 
     const insertResult = await db.run(
