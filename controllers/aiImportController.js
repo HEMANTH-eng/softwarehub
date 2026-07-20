@@ -112,9 +112,17 @@ async function saveDraft(req, res) {
       });
     }
 
-    // Handle installer file: download or generate installer binary package in storage/software/
+    // Handle icon file upload
+    let iconImagePath = p.icon_image || '';
+    if (req.files && req.files.icon_file && req.files.icon_file[0]) {
+      iconImagePath = req.files.icon_file[0].filename;
+    }
+
+    // Handle installer file upload / binary generation
     let softwareFilePath = p.file_path || '';
-    if (!softwareFilePath) {
+    if (req.files && req.files.software_file && req.files.software_file[0]) {
+      softwareFilePath = req.files.software_file[0].filename;
+    } else if (!softwareFilePath) {
       const { ensureSoftwareInstallerFile } = require('../services/packageDownloaderService');
       softwareFilePath = await ensureSoftwareInstallerFile({
         softwareName: p.name,
@@ -138,7 +146,7 @@ async function saveDraft(req, res) {
         p.full_description || '',
         p.version || '1.0.0',
         p.size || '25.0 MB',
-        p.icon_image || '',
+        iconImagePath,
         softwareFilePath,
         0,
         1,

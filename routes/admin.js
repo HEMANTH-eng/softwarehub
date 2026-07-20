@@ -269,8 +269,24 @@ router.post('/api/notifications/fulfill-request', requireAuth, autoFulfillReques
 // --- AI IMPORT SYSTEM ENDPOINTS ---
 router.get('/ai-import', requireAuth, renderAiImportPage);
 router.post('/ai-import/generate', requireAuth, generateImportPreview);
-router.post('/ai-import/save-draft', requireAuth, saveDraft);
-router.post('/ai-import/publish/:id?', requireAuth, publishSoftware);
+router.post(
+  '/ai-import/save-draft',
+  requireAuth,
+  upload.fields([
+    { name: 'icon_file', maxCount: 1 },
+    { name: 'software_file', maxCount: 1 }
+  ]),
+  saveDraft
+);
+router.post(
+  '/ai-import/publish/:id?',
+  requireAuth,
+  upload.fields([
+    { name: 'icon_file', maxCount: 1 },
+    { name: 'software_file', maxCount: 1 }
+  ]),
+  publishSoftware
+);
 router.post('/ai-import/check-updates', requireAuth, checkUpdates);
 router.post('/ai-import/update-version/:id', requireAuth, updateVersion);
 

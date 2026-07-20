@@ -280,6 +280,26 @@
           </div>
         </div>
 
+        <!-- Upload Custom Files Section -->
+        <div class="bg-blue-50/70 border border-blue-200 p-4 rounded-xl space-y-3">
+          <h4 class="text-xs font-extrabold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="upload-cloud" class="w-4 h-4 text-blue-600"></i>
+            <span>Custom File Uploads (Optional Override)</span>
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Upload Custom Icon Image</label>
+              <input type="file" id="draft-icon-file" accept="image/*" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs text-slate-700">
+              <span class="text-[10px] text-slate-500 mt-1 block">Optional: Upload custom logo or icon image.</span>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Upload Installer / APK Package File</label>
+              <input type="file" id="draft-software-file" accept=".exe,.msi,.zip,.apk,.dmg,.gz" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs text-slate-700">
+              <span class="text-[10px] text-slate-500 mt-1 block">Optional: Upload custom .exe, .msi, or .apk installer package file.</span>
+            </div>
+          </div>
+        </div>
+
         <!-- SEO Metadata -->
         <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3">
           <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">SEO Title & Meta Tags</h4>
@@ -519,7 +539,8 @@
           saveDraftBtn.disabled = true;
           saveDraftBtn.textContent = 'Saving...';
 
-          const payload = {
+          const formData = new FormData();
+          const p = {
             ...currentPayload,
             name: draftName.value,
             category_id: draftCategory.value,
@@ -537,11 +558,28 @@
             seo_keywords: draftSeoKeywords.value
           };
 
+          Object.keys(p).forEach(k => {
+            if (typeof p[k] === 'object') {
+              formData.append(k, JSON.stringify(p[k]));
+            } else {
+              formData.append(k, p[k] || '');
+            }
+          });
+
+          const iconInput = document.getElementById('draft-icon-file');
+          if (iconInput && iconInput.files[0]) {
+            formData.append('icon_file', iconInput.files[0]);
+          }
+
+          const swFileInput = document.getElementById('draft-software-file');
+          if (swFileInput && swFileInput.files[0]) {
+            formData.append('software_file', swFileInput.files[0]);
+          }
+
           try {
             const res = await fetch('/admin/ai-import/save-draft', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
+              body: formData
             });
             const result = await res.json();
             if (result.success) {
@@ -566,7 +604,8 @@
           publishNowBtn.disabled = true;
           publishNowBtn.textContent = 'Publishing...';
 
-          const payload = {
+          const formData = new FormData();
+          const p = {
             ...currentPayload,
             name: draftName.value,
             category_id: draftCategory.value,
@@ -585,11 +624,28 @@
             is_draft: 0
           };
 
+          Object.keys(p).forEach(k => {
+            if (typeof p[k] === 'object') {
+              formData.append(k, JSON.stringify(p[k]));
+            } else {
+              formData.append(k, p[k] || '');
+            }
+          });
+
+          const iconInput = document.getElementById('draft-icon-file');
+          if (iconInput && iconInput.files[0]) {
+            formData.append('icon_file', iconInput.files[0]);
+          }
+
+          const swFileInput = document.getElementById('draft-software-file');
+          if (swFileInput && swFileInput.files[0]) {
+            formData.append('software_file', swFileInput.files[0]);
+          }
+
           try {
             const res = await fetch('/admin/ai-import/publish', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
+              body: formData
             });
             const result = await res.json();
             if (result.success) {
