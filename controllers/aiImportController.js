@@ -132,49 +132,103 @@ async function saveDraft(req, res) {
       });
     }
 
-    const insertResult = await db.run(
-      `INSERT INTO software 
-       (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new, platform,
-        developer, publisher, license, operating_systems, architecture, system_requirements, installation_guide,
-        features, changelog, pros, cons, tags, seo_title, seo_meta_description, seo_keywords, faq, recommended_software, screenshots,
-        is_draft, github_url, official_url, safety_info) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        p.name.trim(),
-        p.category_id,
-        p.short_description || '',
-        p.full_description || '',
-        p.version || '1.0.0',
-        p.size || '25.0 MB',
-        iconImagePath,
-        softwareFilePath,
-        0,
-        1,
-        p.platform || 'windows',
-        p.developer || '',
-        p.publisher || '',
-        p.license || 'Freeware',
-        p.operating_systems || 'Windows 11, Windows 10',
-        p.architecture || '64-bit (x64)',
-        p.system_requirements || '',
-        p.installation_guide || '',
-        typeof p.features === 'object' ? JSON.stringify(p.features) : (p.features || ''),
-        p.changelog || '',
-        typeof p.pros === 'object' ? JSON.stringify(p.pros) : (p.pros || ''),
-        typeof p.cons === 'object' ? JSON.stringify(p.cons) : (p.cons || ''),
-        p.tags || '',
-        p.seo_title || `Download ${p.name}`,
-        p.seo_meta_description || `Download ${p.name} for Windows / Mobile. Safe direct download.`,
-        p.seo_keywords || `${p.name}, download ${p.name}`,
-        typeof p.faq === 'object' ? JSON.stringify(p.faq) : (p.faq || ''),
-        typeof p.recommended_software === 'object' ? JSON.stringify(p.recommended_software) : (p.recommended_software || ''),
-        typeof p.screenshots === 'object' ? JSON.stringify(p.screenshots) : (p.screenshots || '[]'),
-        1, // is_draft = 1
-        p.github_url || '',
-        p.official_url || '',
-        p.safety_info || '100% Virus-free and verified clean installer package.'
-      ]
-    );
+    const existingSw = await db.get('SELECT id, icon_image, file_path FROM software WHERE LOWER(TRIM(name)) = LOWER(TRIM(?))', [p.name]);
+    let draftId;
+
+    if (existingSw) {
+      draftId = existingSw.id;
+      const finalIcon = iconImagePath || existingSw.icon_image || '';
+      const finalFile = softwareFilePath || existingSw.file_path || '';
+
+      await db.run(
+        `UPDATE software SET
+         category_id = ?, short_description = ?, full_description = ?, version = ?, size = ?,
+         icon_image = ?, file_path = ?, is_featured = 0, is_new = 1, platform = ?,
+         developer = ?, publisher = ?, license = ?, operating_systems = ?, architecture = ?,
+         system_requirements = ?, installation_guide = ?, features = ?, changelog = ?,
+         pros = ?, cons = ?, tags = ?, seo_title = ?, seo_meta_description = ?,
+         seo_keywords = ?, faq = ?, recommended_software = ?, screenshots = ?,
+         is_draft = 1, github_url = ?, official_url = ?, safety_info = ?, updated_at = CURRENT_TIMESTAMP
+         WHERE id = ?`,
+        [
+          p.category_id,
+          p.short_description || '',
+          p.full_description || '',
+          p.version || '1.0.0',
+          p.size || '25.0 MB',
+          finalIcon,
+          finalFile,
+          p.platform || 'windows',
+          p.developer || '',
+          p.publisher || '',
+          p.license || 'Freeware',
+          p.operating_systems || 'Windows 11, Windows 10',
+          p.architecture || '64-bit (x64)',
+          p.system_requirements || '',
+          p.installation_guide || '',
+          typeof p.features === 'object' ? JSON.stringify(p.features) : (p.features || ''),
+          p.changelog || '',
+          typeof p.pros === 'object' ? JSON.stringify(p.pros) : (p.pros || ''),
+          typeof p.cons === 'object' ? JSON.stringify(p.cons) : (p.cons || ''),
+          p.tags || '',
+          p.seo_title || `Download ${p.name}`,
+          p.seo_meta_description || `Download ${p.name} for Windows / Mobile. Safe direct download.`,
+          p.seo_keywords || `${p.name}, download ${p.name}`,
+          typeof p.faq === 'object' ? JSON.stringify(p.faq) : (p.faq || ''),
+          typeof p.recommended_software === 'object' ? JSON.stringify(p.recommended_software) : (p.recommended_software || ''),
+          typeof p.screenshots === 'object' ? JSON.stringify(p.screenshots) : (p.screenshots || '[]'),
+          p.github_url || '',
+          p.official_url || '',
+          p.safety_info || '100% Virus-free and verified clean installer package.',
+          draftId
+        ]
+      );
+    } else {
+      const insertResult = await db.run(
+        `INSERT INTO software 
+         (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new, platform,
+          developer, publisher, license, operating_systems, architecture, system_requirements, installation_guide,
+          features, changelog, pros, cons, tags, seo_title, seo_meta_description, seo_keywords, faq, recommended_software, screenshots,
+          is_draft, github_url, official_url, safety_info) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          p.name.trim(),
+          p.category_id,
+          p.short_description || '',
+          p.full_description || '',
+          p.version || '1.0.0',
+          p.size || '25.0 MB',
+          iconImagePath,
+          softwareFilePath,
+          0,
+          1,
+          p.platform || 'windows',
+          p.developer || '',
+          p.publisher || '',
+          p.license || 'Freeware',
+          p.operating_systems || 'Windows 11, Windows 10',
+          p.architecture || '64-bit (x64)',
+          p.system_requirements || '',
+          p.installation_guide || '',
+          typeof p.features === 'object' ? JSON.stringify(p.features) : (p.features || ''),
+          p.changelog || '',
+          typeof p.pros === 'object' ? JSON.stringify(p.pros) : (p.pros || ''),
+          typeof p.cons === 'object' ? JSON.stringify(p.cons) : (p.cons || ''),
+          p.tags || '',
+          p.seo_title || `Download ${p.name}`,
+          p.seo_meta_description || `Download ${p.name} for Windows / Mobile. Safe direct download.`,
+          p.seo_keywords || `${p.name}, download ${p.name}`,
+          typeof p.faq === 'object' ? JSON.stringify(p.faq) : (p.faq || ''),
+          typeof p.recommended_software === 'object' ? JSON.stringify(p.recommended_software) : (p.recommended_software || ''),
+          typeof p.screenshots === 'object' ? JSON.stringify(p.screenshots) : (p.screenshots || '[]'),
+          1, // is_draft = 1
+          p.github_url || '',
+          p.official_url || '',
+          p.safety_info || '100% Virus-free and verified clean installer package.'
+        ]
+      );
+      draftId = insertResult.lastID;
+    }
 
     res.json({
       success: true,

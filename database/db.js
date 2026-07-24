@@ -85,6 +85,12 @@ function initializeSchema() {
             console.log('Database schema software table columns verified/migrated.');
             seedDefaultAdminAndCategories();
             seedDefaultSoftware();
+            try {
+              const cleanupDuplicates = require('./cleanupDuplicates');
+              cleanupDuplicates();
+            } catch (e) {
+              console.error('Error running cleanupDuplicates:', e);
+            }
           }
         });
       });

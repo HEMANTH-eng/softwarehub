@@ -77,53 +77,106 @@ async function publishDirectly(req, res) {
       });
     }
 
-    // Insert into SQLite software table
-    const insertResult = await db.run(
-      `INSERT INTO software 
-       (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new, platform,
-        developer, publisher, license, operating_systems, architecture, system_requirements, installation_guide,
-        features, changelog, pros, cons, tags, seo_title, seo_meta_description, seo_keywords, faq, recommended_software, screenshots) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        p.name.trim(),
-        p.category_id,
-        p.short_description || '',
-        p.full_description || '',
-        p.version || '1.0.0',
-        p.size || '25.0 MB',
-        p.icon_image || '',
-        softwareFilePath,
-        p.is_featured ? 1 : 1, // Default featured for auto published
-        p.is_new ? 1 : 1,      // Default new badge for auto published
-        p.platform || 'windows',
-        p.developer || '',
-        p.publisher || '',
-        p.license || 'Freeware',
-        p.operating_systems || 'Windows 11, Windows 10, Windows 8.1, Windows 7',
-        p.architecture || '64-bit (x64)',
-        p.system_requirements || '',
-        p.installation_guide || '',
-        typeof p.features === 'object' ? JSON.stringify(p.features) : (p.features || ''),
-        p.changelog || '',
-        typeof p.pros === 'object' ? JSON.stringify(p.pros) : (p.pros || ''),
-        typeof p.cons === 'object' ? JSON.stringify(p.cons) : (p.cons || ''),
-        p.tags || '',
-        p.seo_title || `Download ${p.name} for Windows PC`,
-        p.seo_meta_description || `Download ${p.name} for Windows. Free, safe direct download with guide.`,
-        p.seo_keywords || `${p.name}, download ${p.name}, free download`,
-        typeof p.faq === 'object' ? JSON.stringify(p.faq) : (p.faq || ''),
-        typeof p.recommended_software === 'object' ? JSON.stringify(p.recommended_software) : (p.recommended_software || ''),
-        typeof p.screenshots === 'object' ? JSON.stringify(p.screenshots) : (p.screenshots || '[]')
-      ]
-    );
+    // Check if software with same name already exists to prevent duplicates
+    const existingSw = await db.get('SELECT id, icon_image, file_path FROM software WHERE LOWER(TRIM(name)) = LOWER(TRIM(?))', [p.name]);
+    let targetSoftwareId;
 
-    console.log(`[AutoPublisherController] Successfully published "${p.name}" with ID: ${insertResult.lastID}`);
+    if (existingSw) {
+      targetSoftwareId = existingSw.id;
+      const finalIcon = p.icon_image || existingSw.icon_image || '';
+      const finalFile = softwareFilePath || existingSw.file_path || '';
+
+      await db.run(
+        `UPDATE software SET
+         category_id = ?, short_description = ?, full_description = ?, version = ?, size = ?,
+         icon_image = ?, file_path = ?, is_featured = ?, is_new = ?, platform = ?,
+         developer = ?, publisher = ?, license = ?, operating_systems = ?, architecture = ?,
+         system_requirements = ?, installation_guide = ?, features = ?, changelog = ?,
+         pros = ?, cons = ?, tags = ?, seo_title = ?, seo_meta_description = ?,
+         seo_keywords = ?, faq = ?, recommended_software = ?, screenshots = ?, updated_at = CURRENT_TIMESTAMP
+         WHERE id = ?`,
+        [
+          p.category_id,
+          p.short_description || '',
+          p.full_description || '',
+          p.version || '1.0.0',
+          p.size || '25.0 MB',
+          finalIcon,
+          finalFile,
+          p.is_featured ? 1 : 1,
+          p.is_new ? 1 : 1,
+          p.platform || 'windows',
+          p.developer || '',
+          p.publisher || '',
+          p.license || 'Freeware',
+          p.operating_systems || 'Windows 11, Windows 10, Windows 8.1, Windows 7',
+          p.architecture || '64-bit (x64)',
+          p.system_requirements || '',
+          p.installation_guide || '',
+          typeof p.features === 'object' ? JSON.stringify(p.features) : (p.features || ''),
+          p.changelog || '',
+          typeof p.pros === 'object' ? JSON.stringify(p.pros) : (p.pros || ''),
+          typeof p.cons === 'object' ? JSON.stringify(p.cons) : (p.cons || ''),
+          p.tags || '',
+          p.seo_title || `Download ${p.name} for Windows PC`,
+          p.seo_meta_description || `Download ${p.name} for Windows. Free, safe direct download with guide.`,
+          p.seo_keywords || `${p.name}, download ${p.name}, free download`,
+          typeof p.faq === 'object' ? JSON.stringify(p.faq) : (p.faq || ''),
+          typeof p.recommended_software === 'object' ? JSON.stringify(p.recommended_software) : (p.recommended_software || ''),
+          typeof p.screenshots === 'object' ? JSON.stringify(p.screenshots) : (p.screenshots || '[]'),
+          targetSoftwareId
+        ]
+      );
+      console.log(`[AutoPublisherController] Successfully updated existing "${p.name}" with ID: ${targetSoftwareId}`);
+    } else {
+      // Insert into SQLite software table
+      const insertResult = await db.run(
+        `INSERT INTO software 
+         (name, category_id, short_description, full_description, version, size, icon_image, file_path, is_featured, is_new, platform,
+          developer, publisher, license, operating_systems, architecture, system_requirements, installation_guide,
+          features, changelog, pros, cons, tags, seo_title, seo_meta_description, seo_keywords, faq, recommended_software, screenshots) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          p.name.trim(),
+          p.category_id,
+          p.short_description || '',
+          p.full_description || '',
+          p.version || '1.0.0',
+          p.size || '25.0 MB',
+          p.icon_image || '',
+          softwareFilePath,
+          p.is_featured ? 1 : 1, // Default featured for auto published
+          p.is_new ? 1 : 1,      // Default new badge for auto published
+          p.platform || 'windows',
+          p.developer || '',
+          p.publisher || '',
+          p.license || 'Freeware',
+          p.operating_systems || 'Windows 11, Windows 10, Windows 8.1, Windows 7',
+          p.architecture || '64-bit (x64)',
+          p.system_requirements || '',
+          p.installation_guide || '',
+          typeof p.features === 'object' ? JSON.stringify(p.features) : (p.features || ''),
+          p.changelog || '',
+          typeof p.pros === 'object' ? JSON.stringify(p.pros) : (p.pros || ''),
+          typeof p.cons === 'object' ? JSON.stringify(p.cons) : (p.cons || ''),
+          p.tags || '',
+          p.seo_title || `Download ${p.name} for Windows PC`,
+          p.seo_meta_description || `Download ${p.name} for Windows. Free, safe direct download with guide.`,
+          p.seo_keywords || `${p.name}, download ${p.name}, free download`,
+          typeof p.faq === 'object' ? JSON.stringify(p.faq) : (p.faq || ''),
+          typeof p.recommended_software === 'object' ? JSON.stringify(p.recommended_software) : (p.recommended_software || ''),
+          typeof p.screenshots === 'object' ? JSON.stringify(p.screenshots) : (p.screenshots || '[]')
+        ]
+      );
+      targetSoftwareId = insertResult.lastID;
+      console.log(`[AutoPublisherController] Successfully published "${p.name}" with ID: ${targetSoftwareId}`);
+    }
 
     res.json({
       success: true,
       message: `🎉 "${p.name}" has been published to your website automatically!`,
-      softwareId: insertResult.lastID,
-      detailUrl: `/detail/${insertResult.lastID}`
+      softwareId: targetSoftwareId,
+      detailUrl: `/detail/${targetSoftwareId}`
     });
 
   } catch (err) {
